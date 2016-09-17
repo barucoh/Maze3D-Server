@@ -1,6 +1,7 @@
 package controller;
 
 ///Needs to be deleted
+import Manager
 
 import view.CLI;
 
