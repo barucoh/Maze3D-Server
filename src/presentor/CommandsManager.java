@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 
 /**
- * Commands Manager
+ * Commands Manager - TEST
  * <p>Class based on the Command Design Pattern. Aggregates many underlying commands to be processed and sent to the
  * Controller for further execution. The Commands are received from a CLI / GUI input.
  * <p>Created by Ohad on 15/09/2016.
