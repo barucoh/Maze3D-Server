@@ -1,6 +1,6 @@
 package controller;
 
-///Test ohad
+///Needs to be deleted
 
 import view.CLI;
 
