@@ -1,6 +1,6 @@
 package Run;
 
-import controller.*;
+import Controller;
 import model.Model;
 import model.MyModel;
 import view.MyView;
