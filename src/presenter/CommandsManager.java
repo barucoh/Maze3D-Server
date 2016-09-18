@@ -1,26 +1,30 @@
-package controller;
-
-import view.CLI;
+package presenter;
 
 import java.util.HashMap;
+
+import model.Model;
+import view.CLI;
+import view.View;
 
 
 /**
  * Commands Manager
  * <p>Class based on the Command Design Pattern. Aggregates many underlying commands to be processed and sent to the
- * Controller for further execution. The Commands are received from a CLI / GUI input.
+ * Presenter for further execution. The Commands are received from a CLI / GUI input.
  * <p>Created by Ohad on 15/09/2016.
  * @author Ohad
  * @version 1.0
  * @see Command
  * @see CLI
- * @see Controller
+ * @see Presenter
  */
 public class CommandsManager {
-    private Controller controller;
+	private Model model;
+	private View view;
 
-    public CommandsManager(Controller controller) {
-        this.controller = controller;
+    public CommandsManager(Model model, View  view) {
+        this.model = model;
+        this.view = view;
     }
 
     public HashMap<String, Command> getCommandsMap() {
@@ -41,7 +45,7 @@ public class CommandsManager {
     public class DirCommand extends CommonCommand {
         @Override
         public void doCommand(String[] args) {
-            controller.displayDirectory(args[0]);
+        	model.displayDirectory(args[0]);
         }
     }
 
@@ -49,7 +53,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.displayCrossSection(args[0], args[1], Integer.parseInt(args[2]));
+        	presenter.displayCrossSection(args[0], args[1], Integer.parseInt(args[2]));
         }
     }
 
@@ -57,7 +61,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.displayMaze(args[0]);
+            presenter.displayMaze(args[0]);
         }
     }
 
@@ -65,7 +69,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.displaySolution(args[0]);
+            presenter.displaySolution(args[0]);
         }
     }
 
@@ -73,7 +77,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.exit();
+            presenter.exit();
         }
     }
 
@@ -85,7 +89,7 @@ public class CommandsManager {
             int cols = Integer.parseInt(args[1]);
             int rows = Integer.parseInt(args[2]);
             int layers = Integer.parseInt(args[3]);
-            controller.generateMaze(name, cols, rows, layers);
+            presenter.generateMaze(name, cols, rows, layers);
         }
     }
 
@@ -93,7 +97,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.loadMaze(args[0], args[1]);
+            presenter.loadMaze(args[0], args[1]);
         }
     }
 
@@ -101,7 +105,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.saveMaze(args[0], args[1]);
+            presenter.saveMaze(args[0], args[1]);
         }
     }
 
@@ -109,7 +113,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            controller.solveMaze(args[0]);
+            presenter.solveMaze(args[0]);
         }
     }
 }
