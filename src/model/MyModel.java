@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.GZIPOutputStream;
 
 import algorithms.IO.MyCompressorOutputStream;
 import algorithms.IO.MyDecompressorInputStream;
@@ -105,7 +106,11 @@ public class MyModel extends Observable implements Model {
         SaveMazeRunnable saveMazeRunnable = new SaveMazeRunnable(mazeName, fileName);
         executor.execute(saveMazeRunnable);
     }
-
+    @Override
+    public void saveMazeSolutionsMap(String fileName) {
+    	
+    }
+    
     @Override
     public void loadMaze(String name, String fileName) {
         LoadMazeRunnable loadMazeRunnable = new LoadMazeRunnable(name, fileName);
@@ -186,7 +191,45 @@ public class MyModel extends Observable implements Model {
             out.setDone(true);
         }
     }
+    /*class SaveMazeSolutionsMapRunnable implements Runnable {
 
+        private String fileName;
+        GZIPOutputStream out = null;
+
+        public SaveMazeSolutionsMapRunnable(String fileName) {
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void run() {
+                try {
+                    out = new GZIPOutputStream(new FileOutputStream(fileName));
+                    byte[] arr;
+                    for (String mazeName : solutions.keySet()) {
+                    	arr = mazes.get(mazeName).getMaze().toByteArray();
+	                    out.write(arr.length / 255);
+	                    out.write(arr.length % 255);
+	                    out.write(arr);
+	                    arr = solutions.get(mazeName).toByteArray();
+	                    out.write(arr.length / 255);
+	                    out.write(arr.length % 255);
+	                    out.write(arr);
+                    }
+    	            setChanged();
+    	            notifyObservers("maze_saved " + mazeName + " " + fileName);
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    close(out);
+                }
+            }
+        public void terminate() {
+            out.setDone(true);
+        }
+    }
+    */
     class LoadMazeRunnable implements Runnable {
 
         private String mazeName;
