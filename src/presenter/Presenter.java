@@ -26,7 +26,7 @@ public class Presenter implements Observer {
 	    String input = (String)arg;
 	    String cmdStr = input.split(" ")[0];
         String[] args = null;
-	    Command command = cliMapper.get("print_menu");
+	    Command command = null;
 	    
 		if (!cliMapper.containsKey(cmdStr)) {
 			view.displayMessage("Command doesn't exist");
@@ -34,7 +34,6 @@ public class Presenter implements Observer {
 		}
 		else {
 	        args = input.substring(input.indexOf(" ") + 1).split(" ");
-	        cliMapper.get(cmdStr).doCommand(args);
 			command = cliMapper.get(cmdStr);
 		}
 		command.doCommand(args);

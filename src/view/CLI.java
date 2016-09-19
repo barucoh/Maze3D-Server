@@ -26,6 +26,7 @@ public class CLI extends Observable{
                 notifyObservers("print_menu");
                 do
                 {
+                    input = "";
                     try {
                     	input = in.readLine();
                     	setChanged();
@@ -34,12 +35,7 @@ public class CLI extends Observable{
                     catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    finally {
-                        input = "";
-                    }
                 }while (!input.split(" ")[0].toUpperCase().equals("EXIT"));
-            	setChanged();
-            	notifyObservers(input);
             }
         });
         thread.start();
