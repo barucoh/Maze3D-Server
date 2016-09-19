@@ -175,7 +175,7 @@ public class CommandsManager {
     }
     
     public class MazeSavedCommand extends CommonCommand {
-    	private MazeSaveCommand() { this.setVisibility(false); }
+    	private MazeSavedCommand() { this.setVisibility(false); }
     	
         @Override
         public void doCommand(String[] args) {
