@@ -71,7 +71,10 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void displayMaze(Maze3D maze) {
-        this.displayMessage(maze.toString());
+    	if (maze == null)
+    		this.displayMessage("No such maze found");
+    	else
+    		this.displayMessage(maze.toString());
     }
 
     @Override

@@ -88,7 +88,9 @@ public class MyModel extends Observable implements Model {
 
     @Override
     public Maze3D getMaze(String name) {
-        return mazes.get(name).getMaze();
+    	if (mazes.get(name) != null)
+    		return mazes.get(name).getMaze();
+    	else return null;
     }
 
     @Override
@@ -154,7 +156,7 @@ public class MyModel extends Observable implements Model {
                     out.write(arr.length % 255);
                     out.write(arr);
     	            setChanged();
-    	            notifyObservers("maze_saved " + mazeName + fileName);
+    	            notifyObservers("maze_saved " + mazeName + " " + fileName);
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
