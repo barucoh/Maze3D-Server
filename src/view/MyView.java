@@ -106,6 +106,7 @@ public class MyView extends Observable implements View, Observer{
         	}
         	else
         		out.print(command);
+        	count++;
         }
         out.println(")");
         out.flush();
