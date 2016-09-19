@@ -99,12 +99,12 @@ public class MyView extends Observable implements View, Observer{
     @Override
 	public void printMenu(HashMap<String, Command> cliMapper) {
         out.print("Choose command: (");
-        String [] keys = (String [])cliMapper.keySet().toArray();
+        String [] keys = cliMapper.keySet().toArray(new String[cliMapper.keySet().size()]);
         for (int i = 0; i < cliMapper.keySet().size(); i++) {
         	if (i != cliMapper.keySet().size() - 1)
-        		out.print(cliMapper.get(keys[i]) + ",");
+        		out.print(keys[i] + ",");
         	else
-        		out.print(cliMapper.get(keys[i]));
+        		out.print(keys[i]);
         }
         out.println(")");
         out.flush();
