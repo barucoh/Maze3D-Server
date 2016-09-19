@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.Callable;
@@ -38,12 +39,14 @@ import view.View;
 public class MyModel extends Observable implements Model {
     Presenter presenter;
     private Map<String, Maze3DSearchable<Position>> mazes;
+    private Map<String, Solution<Position>> solutions;
     
 	private ExecutorService executor;
 
     public MyModel() {
 		executor = Executors.newFixedThreadPool(50);
         this.mazes = new ConcurrentHashMap<>();
+        this.solutions = new HashMap<>();
     }
 
     @Override
@@ -64,6 +67,7 @@ public class MyModel extends Observable implements Model {
     @Override
     public Solution<Position> solveMaze(String mazeName, String strategy) {
     	try {
+    		if (solutions.get(mazeName) != null) return solutions.get(mazeName);
 			Future<Solution<Position>> solution = executor.submit(new Callable<Solution<Position>>() {
 				@Override
 				public Solution<Position> call() throws Exception {
@@ -87,10 +91,8 @@ public class MyModel extends Observable implements Model {
     }
 
     @Override
-    public Maze3D getMaze(String name) {
-    	if (mazes.get(name) != null)
-    		return mazes.get(name).getMaze();
-    	else return null;
+    public Maze3D getMaze(String name) throws NullPointerException{
+		return mazes.get(name).getMaze();
     }
 
     @Override
@@ -134,7 +136,17 @@ public class MyModel extends Observable implements Model {
 		    e.printStackTrace();
 		}
     }
-
+    
+    @Override
+    public void setSolution(String name, Solution<Position> solution) {
+        solutions.put(name, solution);
+    }
+    
+    @Override
+    public Solution<Position> getSolution(String name) {
+    	return solutions.get(name);
+    }
+    
     class SaveMazeRunnable implements Runnable {
 
         private String mazeName;

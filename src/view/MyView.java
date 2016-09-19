@@ -28,14 +28,10 @@ public class MyView extends Observable implements View, Observer{
     //private BufferedReader in;
     private PrintWriter out;
     private CLI cli;
-
-    private Map<String, Solution<Position>> solutions;
     
     public MyView(BufferedReader in, PrintWriter out) {
         //this.in = in;
         this.out = out;
-        
-        this.solutions = new HashMap<>();
         
         this.cli = new CLI(in, out);
         this.cli.addObserver(this);
@@ -48,7 +44,7 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void displaySolution(String solution) {
-        this.displayMessage(solutions.get(solution).toString());
+        this.displayMessage(solution);
     }
 
     @Override
@@ -78,11 +74,6 @@ public class MyView extends Observable implements View, Observer{
     }
 
     @Override
-    public void setSolution(String name, Solution<Position> solution) {
-        solutions.put(name, solution);
-    }
-
-    @Override
     public void displayCrossSection(int [][] mazeSection) {
         for(int i = 0; i < mazeSection.length; i++) {
             out.println("{");
@@ -98,7 +89,7 @@ public class MyView extends Observable implements View, Observer{
         out.println(msg);
         out.flush();
     }
-
+    
     @Override
 	public void printMenu(HashMap<String, Command> cliMapper) {
         out.print("Choose command: (");

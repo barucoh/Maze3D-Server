@@ -60,7 +60,15 @@ public class CommandsManager {
         
     	@Override
         public void doCommand(String[] args) {
-        	view.displayDirectory(args[0]);
+    		try {
+    			view.displayDirectory(args[0]);
+    		}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
 
@@ -69,8 +77,16 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-        	int [][] section = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]));
-        	view.displayCrossSection(section);
+        	try {
+        		int [][] section = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]));
+        		view.displayCrossSection(section);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
 
@@ -79,8 +95,16 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-            Maze3D maze = model.getMaze(args[0]);
-        	view.displayMaze(maze);
+        	try {
+		        Maze3D maze = model.getMaze(args[0]);
+		    	view.displayMaze(maze);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or maze not found");
+        	}
         }
     }
 
@@ -89,7 +113,15 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-            view.displaySolution(args[0]);
+        	try{
+        		view.displaySolution(model.getSolution(args[0]).toString());
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or solution not found");
+        	}
         }
     }
 
@@ -107,11 +139,19 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            String name = args[0];
-            int cols = Integer.parseInt(args[1]);
-            int rows = Integer.parseInt(args[2]);
-            int layers = Integer.parseInt(args[3]);
-            model.generateMaze(name, cols, rows, layers);
+        	try {
+	            String name = args[0];
+	            int cols = Integer.parseInt(args[1]);
+	            int rows = Integer.parseInt(args[2]);
+	            int layers = Integer.parseInt(args[3]);
+	            model.generateMaze(name, cols, rows, layers);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
 
@@ -120,7 +160,15 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-            model.loadMaze(args[0], args[1]);
+        	try {
+        		model.loadMaze(args[0], args[1]);
+	    	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
 
@@ -129,7 +177,15 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-        	model.saveMaze(args[0], args[1]);
+        	try{
+        		model.saveMaze(args[0], args[1]);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
 
@@ -138,8 +194,16 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
+        	try {
         	Solution<Position> solution = model.solveMaze(args[0], args[1]);
-        	view.setSolution(args[0], solution);
+        	model.setSolution(args[0], solution);
+        	}
+        	catch (ArrayIndexOutOfBoundsException ex) {
+        		view.displayMessage("Not enough arguments!");
+        	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
         }
     }
     

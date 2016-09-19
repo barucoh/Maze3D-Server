@@ -22,7 +22,9 @@ public interface Model {
     void generateMaze(String Name, int cols, int rows, int layers);
     void saveMaze(String mazeName, String fileName);
     void loadMaze(String mazeName, String fileName);
+    public void setSolution(String name, Solution<Position> solution);
+    public Solution<Position> getSolution(String name);
     void exit();
-    Maze3D getMaze(String mazeName);
+    Maze3D getMaze(String mazeName) throws NullPointerException;
     int [][] getCrossSection(String name, String section, int index);
 }
