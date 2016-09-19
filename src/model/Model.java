@@ -19,11 +19,11 @@ import view.View;
  * @see Controller
  */
 public interface Model {
-    Solution<Position> solveMaze(String mazeName);
+    Solution<Position> solveMaze(String mazeName, String strategy);
     void generateMaze(String Name, int cols, int rows, int layers);
     void setPresenter(Presenter presenter);
-    void saveMaze(String name, String fileName);
-    void loadMaze(String name, String fileName);
+    void saveMaze(String mazeName, String fileName);
+    Maze3D loadMaze(String mazeName, String fileName);
     void exit();
     Maze3D getMaze(String mazeName);
     int [][] getCrossSection(String name, String section, int index);
