@@ -1,13 +1,10 @@
 package Run;
 
-import controller.*;
-import model.Model;
 import model.MyModel;
+import presenter.Presenter;
 import view.MyView;
-import view.View;
 
 import java.io.*;
-import java.util.HashMap;
 
 /**
  * Created by Ohad on 10/09/2016.
@@ -15,7 +12,17 @@ import java.util.HashMap;
 public class Main {
     public static void main(String[] args) throws IOException{
         
-    	
+    	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter out = new PrintWriter(System.out);
+				
+		MyView view = new MyView(in, out);
+		MyModel model = new MyModel();
+		
+		Presenter presenter = new Presenter(model, view);
+		model.addObserver(presenter);
+		view.addObserver(presenter);
+				
+		view.start();
     	
     	
     	

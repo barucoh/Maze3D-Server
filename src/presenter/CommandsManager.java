@@ -40,6 +40,7 @@ public class CommandsManager {
         commands.put("load_maze", new LoadMazeCommand());
         commands.put("solve", new SolveMazeCommand());
         commands.put("display_solution", new DisplaySolutionCommand());
+        commands.put("print_menu", new PrintMenuCommand());
         commands.put("exit", new ExitCommand());
 
         return commands;
@@ -118,8 +119,15 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-        	Solution<Position> solution = model.solveMaze(args[0]);
+        	Solution<Position> solution = model.solveMaze(args[0], args[1]);
         	view.setSolution(args[0], solution);
+        }
+    }
+    
+    public class PrintMenuCommand extends CommonCommand {
+        @Override
+        public void doCommand(String[] args) {
+        	view.printMenu(getCommandsMap());
         }
     }
 }

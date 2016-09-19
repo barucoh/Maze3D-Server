@@ -1,5 +1,7 @@
 package view;
 
+import java.util.HashMap;
+
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
@@ -25,7 +27,6 @@ public interface View {
     void displayMaze(Maze3D maze);
     void setSolution(String name, Solution<Position> solution);
     void displayCrossSection(int [][] mazeSection);
-    void generalNotification(String msg);
-    
-
+    void displayMessage(String msg);
+    void printMenu(HashMap<String, Command> cliMapper);
 }

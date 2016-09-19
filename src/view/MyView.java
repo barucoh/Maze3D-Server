@@ -48,7 +48,7 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void displaySolution(String solution) {
-        this.generalNotification(solutions.get(solution).toString());
+        this.displayMessage(solutions.get(solution).toString());
     }
 
     @Override
@@ -66,12 +66,12 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void notifyMazeIsReady(String name) {
-        this.generalNotification("Maze " + name + " is ready!");
+        this.displayMessage("Maze " + name + " is ready!");
     }
 
     @Override
     public void displayMaze(Maze3D maze) {
-        this.generalNotification(maze.toString());
+        this.displayMessage(maze.toString());
     }
 
     @Override
@@ -91,15 +91,20 @@ public class MyView extends Observable implements View, Observer{
     }
 
     @Override
-    public void generalNotification(String msg) {
+    public void displayMessage(String msg) {
         out.println(msg);
         out.flush();
     }
 
-	private void printMenu(HashMap<String, Command> cliMapper) {
+    @Override
+	public void printMenu(HashMap<String, Command> cliMapper) {
         out.print("Choose command: (");
-        for (String command : cliMapper.keySet()) {
-            out.print(command + ",");
+        String [] keys = (String [])cliMapper.keySet().toArray();
+        for (int i = 0; i < cliMapper.keySet().size(); i++) {
+        	if (i != cliMapper.keySet().size() - 1)
+        		out.print(cliMapper.get(keys[i]) + ",");
+        	else
+        		out.print(cliMapper.get(keys[i]));
         }
         out.println(")");
         out.flush();

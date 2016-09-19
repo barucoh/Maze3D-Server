@@ -4,7 +4,6 @@ import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import presenter.Command;
-import presenter.Presenter;
 import view.View;
 
 /**
@@ -21,9 +20,8 @@ import view.View;
 public interface Model {
     Solution<Position> solveMaze(String mazeName, String strategy);
     void generateMaze(String Name, int cols, int rows, int layers);
-    void setPresenter(Presenter presenter);
     void saveMaze(String mazeName, String fileName);
-    Maze3D loadMaze(String mazeName, String fileName);
+    void loadMaze(String mazeName, String fileName);
     void exit();
     Maze3D getMaze(String mazeName);
     int [][] getCrossSection(String name, String section, int index);

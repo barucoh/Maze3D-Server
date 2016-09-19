@@ -11,41 +11,32 @@ public class Presenter implements Observer {
 	private Model model;
 	private View view;
 	private CommandsManager commandsManager;
-	private HashMap<String, Command> commands;
+	private HashMap<String, Command> cliMapper;
 	
 	public Presenter(Model model, View view) {
 		this.model = model;
 		this.view = view;
-			
+		
 		commandsManager = new CommandsManager(model, view);
-		commands = commandsManager.getCommandsMap();
+		cliMapper = commandsManager.getCommandsMap();
 	}
 
-
-    if (cliMapper.containsKey(cmd)) {
-        String[] args = input.substring(input.indexOf(" ") + 1).split(" ");
-        cmd = input.split(" ")[0];
-        cliMapper.get(cmd).doCommand(args);
-	
 	@Override
 	public void update(Observable o, Object arg) {
-		String commandLine = (String)arg;
-		
-		String arr[] = commandLine.split(" ");
-		String command = arr[0];			
-		
-		if(!commands.containsKey(command)) {
+	    String input = (String)arg;
+	    String cmdStr = input.split(" ")[0];
+        String[] args = null;
+	    Command command = cliMapper.get("print_menu");
+	    
+		if (!cliMapper.containsKey(cmdStr)) {
 			view.displayMessage("Command doesn't exist");
+			command = cliMapper.get("print_menu");
 		}
 		else {
-			String[] args = null;
-			if (arr.length > 1) {
-				String commandArgs = commandLine.substring(
-						commandLine.indexOf(" ") + 1);
-				args = commandArgs.split(" ");							
-			}
-			Command cmd = commands.get(command);
-			cmd.doCommand(args);	
+	        args = input.substring(input.indexOf(" ") + 1).split(" ");
+	        cliMapper.get(cmdStr).doCommand(args);
+			command = cliMapper.get(cmdStr);
 		}
+		command.doCommand(args);
 	}
 }
