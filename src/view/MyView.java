@@ -101,12 +101,14 @@ public class MyView extends Observable implements View, Observer{
         out.print("Choose command: (");
         int count = 0;
         for (String command : cliMapper.keySet()) {
-        	if (count != cliMapper.keySet().size() - 1) {
-        		out.print(command + ",");
+        	if (cliMapper.get(command).isVisible()) {
+	        	if (count != cliMapper.keySet().size() - 1) {
+	        		out.print(command + ",");
+	        	}
+	        	else
+	        		out.print(command);
+	        	count++;
         	}
-        	else
-        		out.print(command);
-        	count++;
         }
         out.println(")");
         out.flush();

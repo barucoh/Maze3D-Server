@@ -154,7 +154,7 @@ public class MyModel extends Observable implements Model {
                     out.write(arr.length % 255);
                     out.write(arr);
     	            setChanged();
-    	            notifyObservers("maze_saved " + mazeName);
+    	            notifyObservers("maze_saved " + mazeName + fileName);
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -205,7 +205,7 @@ public class MyModel extends Observable implements Model {
                 }
             } else{
 	            setChanged();
-	            notifyObservers("maze_name_already_exists " + mazeName);
+	            notifyObservers("maze_already_exists " + mazeName);
             }
         }
 

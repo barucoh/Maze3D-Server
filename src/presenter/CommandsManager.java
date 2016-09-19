@@ -43,18 +43,30 @@ public class CommandsManager {
         commands.put("print_menu", new PrintMenuCommand());
         commands.put("exit", new ExitCommand());
 
+        //--------Visibility false--------
+        
+        commands.put("maze_ready", new MazeReadyCommand());
+        commands.put("solution_ready", new SolutionReadyCommand());
+        commands.put("maze_saved", new MazeSavedCommand());
+        commands.put("maze_not_found", new MazeNotFoundCommand());
+        commands.put("maze_loaded", new MazeLoadedCommand());
+        commands.put("maze_already_exists", new MazeAlreadyExistsCommand());
+
         return commands;
     }
 
     public class DirCommand extends CommonCommand {
-        @Override
+    	private DirCommand() { this.setVisibility(true); }
+        
+    	@Override
         public void doCommand(String[] args) {
         	view.displayDirectory(args[0]);
         }
     }
 
     public class DisplayCrossSectionCommand extends CommonCommand {
-
+    	private DisplayCrossSectionCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
         	int [][] section = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]));
@@ -63,7 +75,8 @@ public class CommandsManager {
     }
 
     public class DisplayMazeCommand extends CommonCommand {
-
+    	private DisplayMazeCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
             Maze3D maze = model.getMaze(args[0]);
@@ -72,7 +85,8 @@ public class CommandsManager {
     }
 
     public class DisplaySolutionCommand extends CommonCommand {
-
+    	private DisplaySolutionCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
             view.displaySolution(args[0]);
@@ -80,7 +94,8 @@ public class CommandsManager {
     }
 
     public class ExitCommand extends CommonCommand {
-
+    	private ExitCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
             model.exit();
@@ -88,6 +103,7 @@ public class CommandsManager {
     }
 
     public class Generate3DMazeCommand extends CommonCommand {
+    	private Generate3DMazeCommand() { this.setVisibility(true); }
 
         @Override
         public void doCommand(String[] args) {
@@ -100,7 +116,8 @@ public class CommandsManager {
     }
 
     public class LoadMazeCommand extends CommonCommand {
-
+    	private LoadMazeCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
             model.loadMaze(args[0], args[1]);
@@ -108,6 +125,7 @@ public class CommandsManager {
     }
 
     public class SaveMazeCommand extends CommonCommand {
+    	private SaveMazeCommand() { this.setVisibility(true); }
 
         @Override
         public void doCommand(String[] args) {
@@ -116,6 +134,7 @@ public class CommandsManager {
     }
 
     public class SolveMazeCommand extends CommonCommand {
+    	private SolveMazeCommand() { this.setVisibility(true); }
 
         @Override
         public void doCommand(String[] args) {
@@ -125,9 +144,69 @@ public class CommandsManager {
     }
     
     public class PrintMenuCommand extends CommonCommand {
+    	private PrintMenuCommand() { this.setVisibility(true); }
+    	
         @Override
         public void doCommand(String[] args) {
         	view.printMenu(getCommandsMap());
+        }
+    }
+    
+    //-------
+    //Visibility false
+    //-------
+    
+    public class MazeReadyCommand extends CommonCommand {
+    	private MazeReadyCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Maze " + args[0] + " has been generated successfully!");
+        }
+    }
+    
+    public class SolutionReadyCommand extends CommonCommand {
+    	private SolutionReadyCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Maze " + args[0] + " has been solved!");
+        }
+    }
+    
+    public class MazeSavedCommand extends CommonCommand {
+    	private MazeSaveCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Maze " + args[0] + " has been saved succesfully to file " + args[1]);
+        }
+    }
+    
+    public class MazeNotFoundCommand extends CommonCommand {
+    	private MazeNotFoundCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Save operation failed: Maze " + args[0] + " cannot be found");
+        }
+    }
+    
+    public class MazeLoadedCommand extends CommonCommand {
+    	private MazeLoadedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Maze " + args[0] + " was loaded successfully!");
+        }
+    }
+    
+    public class MazeAlreadyExistsCommand extends CommonCommand {
+    	private MazeAlreadyExistsCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Maze " + args[0] + " already exists");
         }
     }
 }

@@ -32,7 +32,7 @@ public class Presenter implements Observer {
 			view.displayMessage("Command doesn't exist");
 			command = cliMapper.get("print_menu");
 		}
-		else {
+		else if (o == model || cliMapper.get(cmdStr).isVisible()) {
 	        args = input.substring(input.indexOf(" ") + 1).split(" ");
 			command = cliMapper.get(cmdStr);
 		}

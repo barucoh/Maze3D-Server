@@ -10,4 +10,6 @@ package presenter;
  */
 public interface Command {
     void doCommand(String[] args);
+    public boolean isVisible();
+    public void setVisibility(boolean visible);
 }
