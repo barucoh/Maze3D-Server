@@ -2,6 +2,9 @@ package presenter;
 
 import java.util.HashMap;
 
+import algorithms.mazeGenerators.Maze3D;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import model.Model;
 import view.CLI;
 import view.View;
@@ -45,7 +48,7 @@ public class CommandsManager {
     public class DirCommand extends CommonCommand {
         @Override
         public void doCommand(String[] args) {
-        	model.displayDirectory(args[0]);
+        	view.displayDirectory(args[0]);
         }
     }
 
@@ -53,7 +56,8 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-        	presenter.displayCrossSection(args[0], args[1], Integer.parseInt(args[2]));
+        	int [][] section = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]));
+        	view.displayCrossSection(section);
         }
     }
 
@@ -61,7 +65,8 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.displayMaze(args[0]);
+            Maze3D maze = model.getMaze(args[0]);
+        	view.displayMaze(maze);
         }
     }
 
@@ -69,7 +74,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.displaySolution(args[0]);
+            view.displaySolution(args[0]);
         }
     }
 
@@ -77,7 +82,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.exit();
+            model.exit();
         }
     }
 
@@ -89,7 +94,7 @@ public class CommandsManager {
             int cols = Integer.parseInt(args[1]);
             int rows = Integer.parseInt(args[2]);
             int layers = Integer.parseInt(args[3]);
-            presenter.generateMaze(name, cols, rows, layers);
+            model.generateMaze(name, cols, rows, layers);
         }
     }
 
@@ -97,7 +102,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.loadMaze(args[0], args[1]);
+            model.loadMaze(args[0], args[1]);
         }
     }
 
@@ -105,7 +110,7 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.saveMaze(args[0], args[1]);
+        	model.saveMaze(args[0], args[1]);
         }
     }
 
@@ -113,7 +118,8 @@ public class CommandsManager {
 
         @Override
         public void doCommand(String[] args) {
-            presenter.solveMaze(args[0]);
+        	Solution<Position> solution = model.solveMaze(args[0]);
+        	view.setSolution(args[0], solution);
         }
     }
 }

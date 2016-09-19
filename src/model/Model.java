@@ -1,6 +1,8 @@
 package model;
 
 import algorithms.mazeGenerators.Maze3D;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
 import presenter.Presenter;
 import view.View;
@@ -17,11 +19,12 @@ import view.View;
  * @see Controller
  */
 public interface Model {
-    void solveMaze(String mazeName);
+    Solution<Position> solveMaze(String mazeName);
     void generateMaze(String Name, int cols, int rows, int layers);
-    Maze3D getMaze(String mazeName);
-    void exit();
     void setPresenter(Presenter presenter);
     void saveMaze(String name, String fileName);
     void loadMaze(String name, String fileName);
+    void exit();
+    Maze3D getMaze(String mazeName);
+    int [][] getCrossSection(String name, String section, int index);
 }

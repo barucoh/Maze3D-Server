@@ -21,12 +21,6 @@ public class Presenter implements Observer {
 		commands = commandsManager.getCommandsMap();
 	}
 
-
-    if (cliMapper.containsKey(cmd)) {
-        String[] args = input.substring(input.indexOf(" ") + 1).split(" ");
-        cmd = input.split(" ")[0];
-        cliMapper.get(cmd).doCommand(args);
-	
 	@Override
 	public void update(Observable o, Object arg) {
 		String commandLine = (String)arg;
@@ -35,7 +29,7 @@ public class Presenter implements Observer {
 		String command = arr[0];			
 		
 		if(!commands.containsKey(command)) {
-			view.displayMessage("Command doesn't exist");
+			view.displayMessage("Command doesn't exist");			
 		}
 		else {
 			String[] args = null;
@@ -45,7 +39,7 @@ public class Presenter implements Observer {
 				args = commandArgs.split(" ");							
 			}
 			Command cmd = commands.get(command);
-			cmd.doCommand(args);	
+			cmd.doCommand(args);
 		}
 	}
 }

@@ -14,7 +14,17 @@ import java.util.HashMap;
  */
 public class Main {
     public static void main(String[] args) throws IOException{
+        
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	/*
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        
         PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
 
         Controller ctrl = new MyController();
@@ -33,5 +43,6 @@ public class Main {
         model.setPresenter(ctrl);
 
         view.start();
+        */
     }
 }

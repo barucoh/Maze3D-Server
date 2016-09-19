@@ -6,8 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import algorithms.IO.MyCompressorOutputStream;
@@ -18,6 +20,7 @@ import algorithms.mazeGenerators.GrowingTreeGenerator3D;
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.BFS;
+import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import presenter.Presenter;
 import view.View;
@@ -31,13 +34,14 @@ import view.View;
  * @see View
  * @see Controller
  */
-public class MyModel implements Model {
+public class MyModel extends Observable implements Model {
     Presenter presenter;
     private Map<String, Maze3DSearchable> mazes;
     private List<GenerateMazeRunnable> generateMazeTasks = new ArrayList<>();
     private List<SaveMazeRunnable> saveMazeTasks = new ArrayList<>();
     private List<LoadMazeRunnable> loadMazeTasks = new ArrayList<>();
     private List<Thread> threads = new ArrayList<>();
+    
 
     public MyModel() {
         this.mazes = new ConcurrentHashMap<>();
@@ -73,9 +77,35 @@ public class MyModel implements Model {
             gen.setDone(true);
         }
     }
+    class SolveMazeRunnable implements Runnable {
 
+        private int cols, rows, layers;
+        private String name;
+        private Searcher<Position> strategy;
+
+        public SolveMazeRunnable(int cols, int rows, int layers, String name, String strategy) {
+            this.cols = cols;
+            this.rows = rows;
+            this.layers = layers;
+            this.name = name;
+            this.strategy = strategy;
+        }
+
+        @Override
+        public void run() {
+            Maze3DSearchable maze = mazes.get(name);
+            BFS<Position> bfs = new BFS<>();
+            Solution<Position> sol = bfs.search(maze);
+            presenter.setSolution(mazeName, sol);
+            presenter.generalNotification("Maze " + mazeName + " has been solved!");
+        }
+
+        public void terminate() {
+            gen.setDone(true);
+        }
+    }
     @Override
-    public void solveMaze(String mazeName) {
+    public Solution<Position> solveMaze(String mazeName) {
         Maze3DSearchable maze = this.mazes.get(mazeName);
         BFS<Position> bfs = new BFS<>();
         Solution<Position> sol = bfs.search(maze);
@@ -203,12 +233,27 @@ public class MyModel implements Model {
         threads.add(thread);
     }
 
-    private static void close(Closeable c) {
-        if (c == null) return;
-        try {
-            c.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public int [][] getCrossSection(String name, String section, int index) {
+        int [][] arr;
+        section = section.toUpperCase();
+        switch (section) {
+            case "X": arr = mazes.get(name).getMaze().getCrossSectionByX(index);
+                break;
+            case "Y": arr = mazes.get(name).getMaze().getCrossSectionByY(index);
+                break;
+            case "Z": arr = mazes.get(name).getMaze().getCrossSectionByZ(index);
+                break;
+            default:
+                arr = new int[0][0];
         }
+        return arr;
+    }
+    
+    private static void close(Closeable c) {
+    if (c == null) return;
+    try {
+        c.close();
+    } catch (IOException e) {
+        e.printStackTrace();
     }
 }

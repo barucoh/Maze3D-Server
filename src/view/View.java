@@ -3,12 +3,8 @@ package view;
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import controller.Command;
-import controller.Controller;
+import presenter.Command;
 import model.Model;
-
-import java.util.HashMap;
-
 
 /**
  * View interface
@@ -23,13 +19,13 @@ import java.util.HashMap;
  */
 public interface View {
     void start();
-    void setController(Controller controller);
     void displaySolution(String solution);
     void displayDirectory(String path);
     void notifyMazeIsReady(String name);
     void displayMaze(Maze3D maze);
     void setSolution(String name, Solution<Position> solution);
-    void setCommands(HashMap<String, Command> commands);
-    void displayCrossSection(String name, String section, int index);
+    void displayCrossSection(int [][] mazeSection);
     void generalNotification(String msg);
+    
+
 }

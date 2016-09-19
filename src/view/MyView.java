@@ -3,8 +3,7 @@ package view;
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import controller.Command;
-import controller.Controller;
+import presenter.Command;
 import model.Model;
 
 import java.io.BufferedReader;
@@ -13,6 +12,8 @@ import java.io.PrintWriter;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * MyView
@@ -23,39 +24,31 @@ import java.util.Map;
  * @see Model
  * @see Controller
  */
-public class MyView implements View {
+public class MyView extends Observable implements View, Observer{
     //private BufferedReader in;
     private PrintWriter out;
     private CLI cli;
 
-    private Controller controller;
-    HashMap<String, Boolean> mazesReady;
     private Map<String, Solution<Position>> solutions;
-
+    
     public MyView(BufferedReader in, PrintWriter out) {
         //this.in = in;
         this.out = out;
-
-        this.cli = new CLI(in, out);
-        this.mazesReady = new HashMap<>();
+        
         this.solutions = new HashMap<>();
+        
+        this.cli = new CLI(in, out);
+        this.cli.addObserver(this);
     }
 
     @Override
     public void start() {
-        mazesReady = new HashMap<>();
         this.cli.Start();
     }
 
     @Override
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
-
-    @Override
     public void displaySolution(String solution) {
-        out.println(solutions.get(solution));
-        out.flush();
+        this.generalNotification(solutions.get(solution).toString());
     }
 
     @Override
@@ -73,15 +66,12 @@ public class MyView implements View {
 
     @Override
     public void notifyMazeIsReady(String name) {
-        mazesReady.put(name, true);
-        out.println("Maze " + name + " is ready!");
-        out.flush();
+        this.generalNotification("Maze " + name + " is ready!");
     }
 
     @Override
     public void displayMaze(Maze3D maze) {
-        out.println(maze.toString());
-        out.flush();
+        this.generalNotification(maze.toString());
     }
 
     @Override
@@ -90,28 +80,11 @@ public class MyView implements View {
     }
 
     @Override
-    public void setCommands(HashMap<String, Command> commands) {
-        cli.setCommands(commands);
-    }
-
-    @Override
-    public void displayCrossSection(String name, String section, int index) {
-        int [][] arr;
-        section = section.toUpperCase();
-        switch (section) {
-            case "X": arr = controller.getMaze(name).getCrossSectionByX(index);
-                break;
-            case "Y": arr = controller.getMaze(name).getCrossSectionByY(index);
-                break;
-            case "Z": arr = controller.getMaze(name).getCrossSectionByZ(index);
-                break;
-            default:
-                arr = new int[0][0];
-        }
-        for(int i = 0; i < arr.length; i++) {
+    public void displayCrossSection(int [][] mazeSection) {
+        for(int i = 0; i < mazeSection.length; i++) {
             out.println("{");
-            for (int j = 0; j < arr[i].length; j++)
-                out.print(arr[i][j]);
+            for (int j = 0; j < mazeSection[i].length; j++)
+                out.print(mazeSection[i][j]);
             out.println("}");
         }
         out.flush();
@@ -122,4 +95,21 @@ public class MyView implements View {
         out.println(msg);
         out.flush();
     }
+
+	private void printMenu(HashMap<String, Command> cliMapper) {
+        out.print("Choose command: (");
+        for (String command : cliMapper.keySet()) {
+            out.print(command + ",");
+        }
+        out.println(")");
+        out.flush();
+    }
+        
+    @Override
+	public void update(Observable o, Object arg) {
+    	if (o == this.cli) {
+    		setChanged();
+    		notifyObservers(arg);
+    	}
+	}
 }
