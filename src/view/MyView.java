@@ -1,8 +1,6 @@
 package view;
 
 import algorithms.mazeGenerators.Maze3D;
-import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
 import presenter.Command;
 import model.Model;
 
@@ -11,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 

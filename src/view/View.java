@@ -3,8 +3,6 @@ package view;
 import java.util.HashMap;
 
 import algorithms.mazeGenerators.Maze3D;
-import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
 import presenter.Command;
 import model.Model;
 

@@ -1,10 +1,13 @@
 package model;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -13,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import algorithms.IO.MyCompressorOutputStream;
@@ -26,6 +31,9 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import presenter.Presenter;
+import presenter.Properties;
+import presenter.PropertiesLoader;
+import presenter.PropertiesSaver;
 import view.View;
 
 /**
@@ -41,16 +49,22 @@ public class MyModel extends Observable implements Model {
     Presenter presenter;
     private Map<String, Maze3DSearchable<Position>> mazes;
     private Map<String, Solution<Position>> solutions;
+    private Properties properties;
     
 	private ExecutorService executor;
 
     public MyModel() {
-		executor = Executors.newFixedThreadPool(50);
+    	PropertiesSaver.getInstance();
+		properties = PropertiesLoader.getInstance().getProperties();
+		executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
+		loadMazesAndSolutions(properties.getMazeSolutionsFileName());
+		
         this.mazes = new ConcurrentHashMap<>();
         this.solutions = new HashMap<>();
     }
 
-    @Override
+
+	@Override
     public void generateMaze(String name, int cols, int rows, int layers) {
 		executor.submit(new Callable<Maze3D>() {
 			@Override
@@ -97,8 +111,12 @@ public class MyModel extends Observable implements Model {
     }
 
     @Override
-    public void exit() {
-        this.executor.shutdownNow();
+    public void exit() throws InterruptedException{
+		PropertiesSaver.saveProperties(this.properties);
+        saveMazesAndSolutions(this.properties.getMazeSolutionsFileName());
+        
+        this.executor.shutdown();
+        this.executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
     }
     
     @Override
@@ -107,16 +125,21 @@ public class MyModel extends Observable implements Model {
         executor.execute(saveMazeRunnable);
     }
     @Override
-    public void saveMazeSolutionsMap(String fileName) {
-    	
+    public void saveMazesAndSolutions(String fileName) {
+		SaveMazeSolutionsRunnable saveMazeSolutionsRunnable = new SaveMazeSolutionsRunnable(fileName);
+        executor.execute(saveMazeSolutionsRunnable);
     }
-    
     @Override
     public void loadMaze(String name, String fileName) {
         LoadMazeRunnable loadMazeRunnable = new LoadMazeRunnable(name, fileName);
         executor.execute(loadMazeRunnable);
     }
-
+	public void loadMazesAndSolutions(String fileName) {
+		LoadMazeSolutionsRunnable loadMazeSolutionsRunnable = new LoadMazeSolutionsRunnable(fileName);
+        executor.execute(loadMazeSolutionsRunnable);
+	}
+    
+    
     public int [][] getCrossSection(String name, String section, int index) {
         int [][] arr;
         section = section.toUpperCase();
@@ -191,45 +214,41 @@ public class MyModel extends Observable implements Model {
             out.setDone(true);
         }
     }
-    /*class SaveMazeSolutionsMapRunnable implements Runnable {
+    class SaveMazeSolutionsRunnable implements Runnable {
 
         private String fileName;
         GZIPOutputStream out = null;
 
-        public SaveMazeSolutionsMapRunnable(String fileName) {
+        public SaveMazeSolutionsRunnable(String fileName) {
             this.fileName = fileName;
         }
 
         @Override
         public void run() {
-                try {
-                    out = new GZIPOutputStream(new FileOutputStream(fileName));
-                    byte[] arr;
-                    for (String mazeName : solutions.keySet()) {
-                    	arr = mazes.get(mazeName).getMaze().toByteArray();
-	                    out.write(arr.length / 255);
-	                    out.write(arr.length % 255);
-	                    out.write(arr);
-	                    arr = solutions.get(mazeName).toByteArray();
-	                    out.write(arr.length / 255);
-	                    out.write(arr.length % 255);
-	                    out.write(arr);
-                    }
-    	            setChanged();
-    	            notifyObservers("maze_saved " + mazeName + " " + fileName);
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                } finally {
-                    close(out);
-                }
-            }
-        public void terminate() {
-            out.setDone(true);
+        	ObjectOutputStream oos = null;
+    		try {
+    		    oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream("solutions.dat")));
+    			oos.writeObject(mazes);
+    			oos.writeObject(solutions);
+                setChanged();
+                notifyObservers("mazes_solutions_saved " + fileName);	
+    		} catch (FileNotFoundException e) {
+                setChanged();
+                notifyObservers("mazes_solutions_save_failed " + fileName);
+    			e.printStackTrace();
+    		} catch (IOException e) {
+                setChanged();
+                notifyObservers("mazes_solutions_save_failed " + fileName);
+    			e.printStackTrace();
+    		} finally {
+    			try {
+    				oos.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
         }
     }
-    */
     class LoadMazeRunnable implements Runnable {
 
         private String mazeName;
@@ -268,6 +287,49 @@ public class MyModel extends Observable implements Model {
 
         public void terminate() {
             in.setDone(true);
+        }
+    }
+    class LoadMazeSolutionsRunnable implements Runnable {
+        File file;
+        GZIPOutputStream out = null;
+
+        public LoadMazeSolutionsRunnable(String fileName) {
+            file = new File(fileName);
+        }
+
+        @SuppressWarnings("unchecked")
+		@Override
+        public void run() {
+    		if (!file.exists()) {
+                setChanged();
+                notifyObservers("mazes_solutions_load_failed " + file.getName());
+    		}
+    		ObjectInputStream ois = null;
+    		try {
+    			ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream("solutions.dat")));
+    			mazes = (Map<String, Maze3DSearchable<Position>>)ois.readObject();
+    			solutions = (Map<String, Solution<Position>>)ois.readObject();
+                setChanged();
+                notifyObservers("mazes_solutions_loaded");	
+    		} catch (FileNotFoundException e) {
+    			e.printStackTrace();
+                setChanged();
+                notifyObservers("mazes_solutions_load_failed " + file.getName());
+    		} catch (IOException e) {
+    			e.printStackTrace();
+                setChanged();
+                notifyObservers("mazes_solutions_load_failed " + file.getName());
+    		} catch (ClassNotFoundException e) {
+    			e.printStackTrace();
+                setChanged();
+                notifyObservers("mazes_solutions_load_failed " + file.getName());
+    		} finally{
+    			try {
+    				ois.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
         }
     }
 }

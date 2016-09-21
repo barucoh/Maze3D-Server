@@ -51,6 +51,10 @@ public class CommandsManager {
         commands.put("maze_not_found", new MazeNotFoundCommand());
         commands.put("maze_loaded", new MazeLoadedCommand());
         commands.put("maze_already_exists", new MazeAlreadyExistsCommand());
+        commands.put("mazes_solutions_saved", new MazeAlreadyExistsCommand());
+        commands.put("mazes_solutions_save_failed", new MazeAlreadyExistsCommand());
+        commands.put("mazes_solutions_loaded", new MazeAlreadyExistsCommand());
+        commands.put("mazes_solutions_load_failed", new MazeAlreadyExistsCommand());
 
         return commands;
     }
@@ -130,7 +134,12 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-            model.exit();
+            try {
+            	model.exit();
+            }
+            catch (Exception ex) {
+            	ex.printStackTrace();
+            }
         }
     }
 
@@ -216,9 +225,41 @@ public class CommandsManager {
         }
     }
     
-    //-------
+    public class SaveMazesSolutionsCommand extends CommonCommand {
+    	private SaveMazesSolutionsCommand() { this.setVisibility(true); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	try {
+        		model.saveMazesAndSolutions(args[0]);
+        	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
+        }
+    }
+    
+    public class LoadMazesSolutionsCommand extends CommonCommand {
+    	private LoadMazesSolutionsCommand() { this.setVisibility(true); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	try {
+        		model.loadMazesAndSolutions(args[0]);
+        	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
+        }
+    }
+    
+    
+    
+    //-------------------------------------------
     //Visibility false
-    //-------
+    //-------------------------------------------
+    
+    
     
     public class MazeReadyCommand extends CommonCommand {
     	private MazeReadyCommand() { this.setVisibility(false); }
@@ -271,6 +312,42 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " already exists");
+        }
+    }
+    
+    public class MazesSolutionsLoadFailedCommand extends CommonCommand {
+    	private MazesSolutionsLoadFailedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Mazes solutions failed to load from file " + args[0]);
+        }
+    }
+    
+    public class MazesSolutionsLoadedCommand extends CommonCommand {
+    	private MazesSolutionsLoadedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Mazes solutions loaded successfully!");
+        }
+    }
+    
+    public class MazesSolutionsSavedCommand extends CommonCommand {
+    	private MazesSolutionsSavedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Mazes solutions saved successfully to " + args[0]);
+        }
+    }
+    
+    public class MazesSolutionsSaveFailedCommand extends CommonCommand {
+    	private MazesSolutionsSaveFailedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Mazes solutions failed to save to " + args[0]);
         }
     }
 }
