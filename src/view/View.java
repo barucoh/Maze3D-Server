@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import algorithms.mazeGenerators.Maze3D;
 import presenter.Command;
+import server.ClientHandler;
 import model.Model;
 
 /**
@@ -18,7 +19,8 @@ import model.Model;
  * @see Controller
  */
 public interface View {
-    void start();
+    //void start();
+	void setClientObserver(ClientHandler observer);
     void displaySolution(String solution);
     void displayDirectory(String path);
     void notifyMazeIsReady(String name);

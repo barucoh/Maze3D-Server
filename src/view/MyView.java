@@ -2,6 +2,7 @@ package view;
 
 import algorithms.mazeGenerators.Maze3D;
 import presenter.Command;
+import server.ClientHandler;
 import model.Model;
 
 import java.io.BufferedReader;
@@ -21,24 +22,30 @@ import java.util.Observer;
  * @see Model
  * @see Controller
  */
-public class MyView extends Observable implements View, Observer{
+public class MyView extends Observable implements View{
     //private BufferedReader in;
-    private PrintWriter out;
-    private CLI cli;
+    //private PrintWriter out;
+    //private CLI cli;
+    //private Maze3DHandler clientHandler;
     
+	public MyView() {}
+	
     public MyView(BufferedReader in, PrintWriter out) {
         //this.in = in;
-        this.out = out;
+        //this.out = out;
         
-        this.cli = new CLI(in, out);
-        this.cli.addObserver(this);
+        //this.cli = new CLI(in, out);
+        //this.cli.addObserver(this);
+        
+        //this.clientHandler = new Maze3DHandler();
+        //this.clientHandler.addObserver(this);
     }
 
     @Override
-    public void start() {
-        this.cli.Start();
+    public void setClientObserver(ClientHandler observer) {
+    	this.addObserver((Observer) observer);
     }
-
+    
     @Override
     public void displaySolution(String solution) {
         this.displayMessage(solution);
@@ -46,12 +53,13 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void displayDirectory(String path) {
+    	StringBuilder sb = new StringBuilder();
         Path dir = FileSystems.getDefault().getPath(path);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path file: stream) {
-                out.println(file.getFileName());
+                sb.append(file.getFileName());
             }
-            out.flush();
+            this.displayMessage(sb.toString());
         } catch (IOException | DirectoryIteratorException x) {
             x.printStackTrace();
         }
@@ -72,39 +80,39 @@ public class MyView extends Observable implements View, Observer{
 
     @Override
     public void displayCrossSection(int [][] mazeSection) {
+    	StringBuilder sb = new StringBuilder();
         for(int i = 0; i < mazeSection.length; i++) {
-            out.println("{");
+            sb.append("{");
             for (int j = 0; j < mazeSection[i].length; j++)
-                out.print(mazeSection[i][j]);
-            out.println("}");
+                sb.append(mazeSection[i][j]);
+            sb.append("}");
         }
-        out.flush();
+        this.displayMessage(sb.toString());
     }
 
     @Override
     public void displayMessage(String msg) {
-        out.println(msg);
-        out.flush();
+        notifyObservers(msg);
     }
     
     @Override
 	public void printMenu(HashMap<String, Command> cliMapper) {
-        out.print("Choose command: (");
-        StringBuilder sb = new StringBuilder();
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("Choose command: (");
         for (String command : cliMapper.keySet()) {
         	if (cliMapper.get(command).isVisible()) {
         		sb.append(command + ",");
         	}
         }
-        out.println(sb.toString().substring(0, sb.length() - 1) + ")");
-        out.flush();
+        sb.append(sb.toString().substring(0, sb.length() - 1) + ")");
+        this.displayMessage(sb.toString());
     }
         
-    @Override
-	public void update(Observable o, Object arg) {
-    	if (o == this.cli) {
-    		setChanged();
-    		notifyObservers(arg);
-    	}
-	}
+//    @Override
+//	public void update(Observable updateFrom, Object objToSend) {
+//    	if (updateFrom instanceof Model) {
+//    		setChanged();
+//    		notifyObservers(objToSend);
+//    	}
+//	}
 }

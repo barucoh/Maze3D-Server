@@ -29,8 +29,8 @@ public class Presenter implements Observer {
 	    Command command = null;
 	    
 		if (!cliMapper.containsKey(cmdStr)) {
-			view.displayMessage("Command doesn't exist");
-			command = cliMapper.get("print_menu");
+			//view.displayMessage("Command doesn't exist");
+			//command = cliMapper.get("print_menu");
 		}
 		else if (o == model || cliMapper.get(cmdStr).isVisible()) {
 	        args = input.substring(input.indexOf(" ") + 1).split(" ");

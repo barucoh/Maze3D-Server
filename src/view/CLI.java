@@ -12,6 +12,11 @@ public class CLI extends Observable{
     BufferedReader in;
     PrintWriter out;
 
+    public CLI() {
+        this.in = null;
+        this.out = null;
+    }
+    
     public CLI(BufferedReader in, PrintWriter out) {
         this.in = in;
         this.out = out;
