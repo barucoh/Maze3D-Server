@@ -3,7 +3,11 @@ package presenter;
 import presenter.Command;
 
 /**
- * Created by Ohad on 10/09/2016.
+ * CommonCommand
+ * <p>Defines common method the every command must have.</p>
+ * 
+ * @author Afik & Ohad
+ * @see Command
  */
 public abstract class CommonCommand implements Command {
     protected boolean visible;

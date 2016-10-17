@@ -6,22 +6,27 @@ import java.io.PrintWriter;
 import java.util.Observable;
 
 /**
- * Created by Ohad on 10/09/2016.
+ * CLI
+ * <p>Set up a new Command line interface to interact with the application.</p>
+ * <p>This loop will run as a separate Thread and dispatch commands from the given input.</p>
+ * 
+ * @author Afik & Ohad
+ *
  */
 public class CLI extends Observable{
     BufferedReader in;
     PrintWriter out;
 
-    public CLI() {
-        this.in = null;
-        this.out = null;
-    }
-    
     public CLI(BufferedReader in, PrintWriter out) {
         this.in = in;
         this.out = out;
     }
-
+    
+    /**
+     * This is the main command loop
+     * every command that given will be executed ro
+     * all observers
+     */
     public void Start() {
         Thread thread = new Thread(new Runnable() {
             @Override

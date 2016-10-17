@@ -7,11 +7,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Observable;
-import java.util.Observer;
 
 import view.View;
 
-public class Maze3DHandler extends Observable implements ClientHandler, Observer {
+public class Maze3DHandler extends Observable implements ClientHandler {
 
 	BufferedReader in;
 	private PrintWriter out;
@@ -21,7 +20,7 @@ public class Maze3DHandler extends Observable implements ClientHandler, Observer
 		try{
 			this.in = new BufferedReader(new InputStreamReader(inFromClient));
 			this.out = new PrintWriter(outToClient);
-			String input = "";
+			String input;
             do
             {
                 input = "";
@@ -41,11 +40,8 @@ public class Maze3DHandler extends Observable implements ClientHandler, Observer
 		}
 	}
 	
-	@Override
-	public void update(Observable updateFrom, Object objToSend) {
-		if (objToSend instanceof View) {
-			this.out.println(objToSend);
-			this.out.flush();
-		}
+	public void updateClient(Object objToSend) {
+		this.out.println(objToSend);
+		this.out.flush();
 	}
 }

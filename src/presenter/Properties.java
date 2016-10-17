@@ -2,6 +2,13 @@ package presenter;
 
 import java.io.Serializable;
 
+/**
+ * Properties
+ * <p>Defines the maze properties of our application</p>
+ * 
+ * @author Afik & Ohad
+ *
+ */
 public class Properties implements Serializable {
 	/**
 	 * 

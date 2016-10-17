@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
 import model.Model;
 import view.CLI;
 import view.View;
@@ -13,9 +12,9 @@ import view.View;
 /**
  * Commands Manager
  * <p>Class based on the Command Design Pattern. Aggregates many underlying commands to be processed and sent to the
- * Presenter for further execution. The Commands are received from a CLI / GUI input.
- * <p>Created by Ohad on 15/09/2016.
- * @author Ohad
+ * Presenter for further execution. The Commands are received from a CLI / GUI input.</p>
+ * 
+ * @author Afik & Ohad
  * @version 1.0
  * @see Command
  * @see CLI
@@ -40,17 +39,22 @@ public class CommandsManager {
         commands.put("load_maze", new LoadMazeCommand());
         commands.put("solve", new SolveMazeCommand());
         commands.put("display_solution", new DisplaySolutionCommand());
-        commands.put("print_menu", new PrintMenuCommand());
+        commands.put("get_clue", new GetClueCommand());
+        commands.put("get_maze", new GetMazeCommand());
+        commands.put("character_moved", new characterMoveCommand());
+        commands.put("save_properties", new SavePropertiesCommand());
+        //commands.put("print_menu", new PrintMenuCommand());
         commands.put("exit", new ExitCommand());
 
         //--------Visibility false--------
-        
         commands.put("maze_ready", new MazeReadyCommand());
         commands.put("solution_ready", new SolutionReadyCommand());
         commands.put("maze_saved", new MazeSavedCommand());
         commands.put("maze_not_found", new MazeNotFoundCommand());
         commands.put("maze_loaded", new MazeLoadedCommand());
         commands.put("maze_already_exists", new MazeAlreadyExistsCommand());
+        commands.put("properties_saved", new PropertiesSavedCommand());
+        commands.put("properties_loaded", new PropertiesLoadedCommand());
         commands.put("mazes_solutions_saved", new MazeAlreadyExistsCommand());
         commands.put("mazes_solutions_save_failed", new MazeAlreadyExistsCommand());
         commands.put("mazes_solutions_loaded", new MazeAlreadyExistsCommand());
@@ -83,7 +87,9 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	try {
         		int [][] section = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]));
-        		view.displayCrossSection(section);
+        		int [][] sectionUP = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]) + 1);
+        		int [][] sectionDOWN = model.getCrossSection(args[0], args[1], Integer.parseInt(args[2]) - 1);
+        		view.displayCrossSection(section, sectionUP, sectionDOWN);
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");
@@ -100,7 +106,7 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	try {
-		        Maze3D maze = model.getMaze(args[0]);
+		    Maze3D maze = model.getMaze(args[0]);
 		    	view.displayMaze(maze);
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
@@ -118,7 +124,24 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	try{
-        		view.displaySolution(model.getSolution(args[0]).toString());
+        		view.displaySolution(model.getSolution(args[0]));
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or solution not found");
+        	}
+        }
+    }
+
+    public class GetClueCommand extends CommonCommand {
+    	private GetClueCommand() { this.setVisibility(true); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	try{
+        		view.setNextStep(model.getClue(args[0]));
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");
@@ -153,7 +176,11 @@ public class CommandsManager {
 	            int cols = Integer.parseInt(args[1]);
 	            int rows = Integer.parseInt(args[2]);
 	            int layers = Integer.parseInt(args[3]);
-	            model.generateMaze(name, cols, rows, layers);
+	            if (model.getProperties().getGenerateMazeAlgorithm().equals("Growing_Tree"))
+	            	model.generateMazeGrowingTree(name, cols, rows, layers);
+	            else
+	            	model.generateMazeSimple(name, cols, rows, layers);
+	            
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");
@@ -204,8 +231,28 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	try {
-        	Solution<Position> solution = model.solveMaze(args[0], args[1]);
-        	model.setSolution(args[0], solution);
+        		if (model.getProperties().getSolveMazeAlgorithm().equals("BFS"))
+        			model.solveMaze(args[0], "BFS");
+        		else
+            		model.solveMaze(args[0], "DFS");
+        	}
+        	catch (ArrayIndexOutOfBoundsException ex) {
+        		view.displayMessage("Not enough arguments!");
+        	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
+        }
+    }
+
+    public class GetMazeCommand extends CommonCommand {
+    	private GetMazeCommand() { this.setVisibility(true); }
+
+        @Override
+        public void doCommand(String[] args) {
+        	try {
+	        	Maze3D maze = model.getMaze(args[0]);
+	        	view.setSelectedMaze(maze);
         	}
         	catch (ArrayIndexOutOfBoundsException ex) {
         		view.displayMessage("Not enough arguments!");
@@ -216,14 +263,14 @@ public class CommandsManager {
         }
     }
     
-    public class PrintMenuCommand extends CommonCommand {
-    	private PrintMenuCommand() { this.setVisibility(true); }
-    	
-        @Override
-        public void doCommand(String[] args) {
-        	view.printMenu(getCommandsMap());
-        }
-    }
+//    public class PrintMenuCommand extends CommonCommand {
+//    	private PrintMenuCommand() { this.setVisibility(true); }
+//    	
+//        @Override
+//        public void doCommand(String[] args) {
+//        	view.printMenu(getCommandsMap());
+//        }
+//    }
     
     public class SaveMazesSolutionsCommand extends CommonCommand {
     	private SaveMazesSolutionsCommand() { this.setVisibility(true); }
@@ -253,6 +300,53 @@ public class CommandsManager {
         }
     }
     
+    public class characterMoveCommand extends CommonCommand {
+		private characterMoveCommand() { this.setVisibility(true); }
+    		
+        @Override
+        public void doCommand(String[] args) {
+        	try {
+        		String mazeName = args[0];
+        		int x = Integer.parseInt(args[1]);
+        		int y = Integer.parseInt(args[2]);
+        		int z = Integer.parseInt(args[3]);
+        		
+    		    Maze3D maze = model.getMaze(mazeName);
+    		    
+    		    if(maze.getMaze()[x][y][z] != Maze3D.WALL){
+		    		view.displayCrossSection(maze.getCrossSectionByZ(z), maze.getCrossSectionByZ(z + 1), maze.getCrossSectionByZ(z - 1));
+		    		view.moveCharacter(new Position(x, y, z));
+    		    }
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or maze not found");
+        	}
+        }
+    }
+    
+    public class SavePropertiesCommand extends CommonCommand {
+		private SavePropertiesCommand() { this.setVisibility(true); }
+    		
+        @Override
+        public void doCommand(String[] args) {
+        	try {
+        		Properties properties = new Properties();
+        		properties.setNumOfThreads(Integer.parseInt(args[0]));
+        		properties.setGenerateMazeAlgorithm(args[1]);
+        		properties.setSolveMazeAlgorithm(args[2]);
+        		model.saveProperties(properties);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or maze not found");
+        	}
+        }
+    }
     
     
     //-------------------------------------------
@@ -266,7 +360,8 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-        	view.displayMessage("Maze " + args[0] + " has been generated successfully!");
+        	view.notifyMazeIsReady(args[0]);
+        	//view.displayMessage("Maze " + args[0] + " has been generated successfully!");
         }
     }
     
@@ -276,6 +371,7 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " has been solved!");
+        	view.setSolutionAvailable(true);
         }
     }
     
@@ -302,7 +398,8 @@ public class CommandsManager {
     	
         @Override
         public void doCommand(String[] args) {
-        	view.displayMessage("Maze " + args[0] + " was loaded successfully!");
+        	//view.displayMessage("Maze " + args[0] + " was loaded successfully!");
+        	view.notifyMazeIsReady(args[0]);
         }
     }
     
@@ -312,6 +409,24 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " already exists");
+        }
+    }
+    
+    public class PropertiesSavedCommand extends CommonCommand {
+    	private PropertiesSavedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Properties saved successfully!");
+        }
+    }
+    
+    public class PropertiesLoadedCommand extends CommonCommand {
+    	private PropertiesLoadedCommand() { this.setVisibility(false); }
+    	
+        @Override
+        public void doCommand(String[] args) {
+        	view.displayMessage("Properties loaded successfully!");
         }
     }
     

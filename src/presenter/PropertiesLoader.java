@@ -11,10 +11,10 @@ public class PropertiesLoader {
 	private PropertiesLoader() 
 	{
 		try {
-			XMLDecoder decoder = new XMLDecoder(new FileInputStream("properties.xml"));
+			XMLDecoder decoder = new XMLDecoder(getClass().getClassLoader().getResourceAsStream("properties.xml"));
 			properties = (Properties)decoder.readObject();
 			decoder.close();
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

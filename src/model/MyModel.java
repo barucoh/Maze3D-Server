@@ -15,7 +15,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -28,6 +27,7 @@ import algorithms.mazeGenerators.ChooseRandomNode;
 import algorithms.mazeGenerators.GrowingTreeGenerator3D;
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
+import algorithms.mazeGenerators.SimpleMaze3DGenerator;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import presenter.Presenter;
@@ -38,10 +38,9 @@ import view.View;
 
 /**
  * MyModel
- * <p>Implements all of Model's functions and handling all the program's backend tasks and IO using multi threading.
- * <p>Created by Ohad on 15/09/2016.
- * @author Ohad
- * @version 1.0
+ * <p>Implements all of Model's functions and handling all the program's backend tasks and IO using multi threading.</p>
+ * 
+ * @author Afik & Ohad
  * @see View
  * @see Controller
  */
@@ -49,60 +48,87 @@ public class MyModel extends Observable implements Model {
     Presenter presenter;
     private Map<String, Maze3DSearchable<Position>> mazes;
     private Map<String, Solution<Position>> solutions;
-    private Properties properties;
+    private Map<String, Integer> mazeClues;
+    
+    public Properties properties;
     
 	private ExecutorService executor;
 
     public MyModel() {
     	PropertiesSaver.getInstance();
 		properties = PropertiesLoader.getInstance().getProperties();
-		executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
-		loadMazesAndSolutions(properties.getMazeSolutionsFileName());
+		if (properties != null) {
+			executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
+			//loadMazesAndSolutions(properties.getMazeSolutionsFileName());
+		}
+		else
+			executor = Executors.newFixedThreadPool(50);
 		
         this.mazes = new ConcurrentHashMap<>();
         this.solutions = new HashMap<>();
+        this.mazeClues = new HashMap<String, Integer>();
     }
-
-
+    
+    public Properties getProperties() {
+    	return properties;
+    }
+    
 	@Override
-    public void generateMaze(String name, int cols, int rows, int layers) {
-		executor.submit(new Callable<Maze3D>() {
+    public void generateMazeGrowingTree(String name, int cols, int rows, int layers) {
+		executor.submit(new Callable<String>() {
 			@Override
-			public Maze3D call() throws Exception {
+			public String call() throws Exception {
 				GrowingTreeGenerator3D generator = new GrowingTreeGenerator3D(new ChooseRandomNode());
 	            Maze3D maze = generator.generate(cols, rows, layers);
 	            mazes.put(name, new Maze3DSearchable<Position>(maze));
 				setChanged();
-				notifyObservers("maze_ready " + name);		
-				return maze;
+				notifyObservers("maze_ready " + name);
+				return name;
+			}
+		});
+    }
+
+	@Override
+    public void generateMazeSimple(String name, int cols, int rows, int layers) {
+		executor.submit(new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				SimpleMaze3DGenerator generator = new SimpleMaze3DGenerator();
+	            Maze3D maze = generator.generate(cols, rows, layers);
+	            mazes.put(name, new Maze3DSearchable<Position>(maze));
+				setChanged();
+				notifyObservers("maze_ready " + name);
+				return name;
 			}
 		});
     }
     
     @Override
-    public Solution<Position> solveMaze(String mazeName, String strategy) {
+    public void solveMaze(String mazeName, String strategy) {
     	try {
-    		if (solutions.get(mazeName) != null) return solutions.get(mazeName);
-			Future<Solution<Position>> solution = executor.submit(new Callable<Solution<Position>>() {
-				@Override
-				public Solution<Position> call() throws Exception {
-			        Maze3DSearchable<Position> maze = mazes.get(mazeName);
-			        Searcher<Position> searcher;
-		            MazeSearcherFactory msf = new MazeSearcherFactory();
-		            searcher = msf.getSearcher(strategy);
-	
-		            Solution<Position> sol = searcher.search(maze);
-		            setChanged();
-		            notifyObservers("solution_ready " + mazeName);
-		            return sol;
-				}
-			});
-			return solution.get();
+    		if (solutions.get(mazeName) != null) { }
+    		else {
+    			mazeClues.put(mazeName, 0);
+    			executor.submit(new Callable<Solution<Position>>() {
+					@Override
+					public Solution<Position> call() throws Exception {
+				        Maze3DSearchable<Position> maze = mazes.get(mazeName);
+				        Searcher<Position> searcher;
+			            MazeSearcherFactory msf = new MazeSearcherFactory();
+			            searcher = msf.getSearcher(strategy);
+		
+			            Solution<Position> sol = searcher.search(maze);
+			            setChanged();
+			            notifyObservers("solution_ready " + mazeName);
+			            solutions.put(mazeName, sol);
+			            return sol;
+					}
+    			});
+			}
     	}
     	catch (Exception ex) {
     		ex.printStackTrace();
     	}
-    	return null;
     }
 
     @Override
@@ -111,9 +137,9 @@ public class MyModel extends Observable implements Model {
     }
 
     @Override
-    public void exit() throws InterruptedException{
+    public void exit() throws InterruptedException {
 		PropertiesSaver.saveProperties(this.properties);
-        saveMazesAndSolutions(this.properties.getMazeSolutionsFileName());
+        //saveMazesAndSolutions(this.properties.getMazeSolutionsFileName());
         
         this.executor.shutdown();
         this.executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
@@ -138,7 +164,6 @@ public class MyModel extends Observable implements Model {
 		LoadMazeSolutionsRunnable loadMazeSolutionsRunnable = new LoadMazeSolutionsRunnable(fileName);
         executor.execute(loadMazeSolutionsRunnable);
 	}
-    
     
     public int [][] getCrossSection(String name, String section, int index) {
         int [][] arr;
@@ -173,6 +198,27 @@ public class MyModel extends Observable implements Model {
     @Override
     public Solution<Position> getSolution(String name) {
     	return solutions.get(name);
+    }
+    
+    @Override
+    public Position getClue(String name) {
+    	mazeClues.put(name, mazeClues.get(name).intValue() + 1);
+    	return solutions.get(name).getStates().get(mazeClues.get(name)).getValue();
+    }
+    
+    @Override
+    public void saveProperties(Properties properties) {
+    	this.properties = properties;
+    	PropertiesSaver.saveProperties(properties);
+    	setChanged();
+    	notifyObservers("properties_saved");
+    }
+    @Override
+    public void loadProperties() {
+		properties = PropertiesLoader.getInstance().getProperties();
+		executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
+    	setChanged();
+    	notifyObservers("properties_loaded");
     }
     
     class SaveMazeRunnable implements Runnable {
