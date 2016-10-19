@@ -87,8 +87,8 @@ public class OutputToClient extends Observable implements View {
 		setChanged();
 		notifyObservers("display_cross_section " + mazeName + " Z 1"); //instead of 1 it's supposed to be nubmer of floor
 		
-		this.goalPosition = selectedMaze.getGoalPosition();
-		this.startPosition = selectedMaze.getStartPosition();
+//		this.goalPosition = selectedMaze.getGoalPosition();
+//		this.startPosition = selectedMaze.getStartPosition();
 	}
 	@Override
 	public void displayMaze(Maze3D maze) { }
@@ -118,7 +118,10 @@ public class OutputToClient extends Observable implements View {
 	 */
 	@Override
 	public void setSelectedMaze(Maze3D maze) {
-		this.selectedMaze = maze;
+		objToSend = new Object[2];
+		objToSend[0] = "get_maze";
+		objToSend[1] = maze;
+		clientHandler.updateClient(objToSend);
 	}
 	
 	/**

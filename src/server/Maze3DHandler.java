@@ -1,38 +1,40 @@
 package server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Observable;
-
-import view.View;
 
 public class Maze3DHandler extends Observable implements ClientHandler {
 
-	BufferedReader in;
-	private PrintWriter out;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
 	
 	@Override
 	public void handleClient(InputStream inFromClient, OutputStream outToClient) {
 		try{
-			this.in = new BufferedReader(new InputStreamReader(inFromClient));
-			this.out = new PrintWriter(outToClient);
-			String input;
+			this.in = new ObjectInputStream(inFromClient);
+			this.out = new ObjectOutputStream(outToClient);
+			Object input;
+			String inputStr = "";
             do
             {
-                input = "";
+                input = null;
                 try {
-                	input = in.readLine();
+                	input = in.readObject();
+                	Object [] obj = (Object[]) input;
+                	inputStr = (String)obj[0];
                 	setChanged();
                 	notifyObservers(input);
                 }
                 catch (IOException ex) {
                     ex.printStackTrace();
-                }
-            }while (!input.split(" ")[0].toUpperCase().equals("EXIT"));
+                } catch (ClassNotFoundException ex) {
+                	ex.printStackTrace();
+				}
+            }while (!inputStr.toUpperCase().equals("EXIT"));
 			in.close();
 			out.close();
 		}catch(IOException e){
@@ -41,7 +43,10 @@ public class Maze3DHandler extends Observable implements ClientHandler {
 	}
 	
 	public void updateClient(Object objToSend) {
-		this.out.println(objToSend);
-		this.out.flush();
+		try {
+			this.out.writeObject(objToSend);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 }

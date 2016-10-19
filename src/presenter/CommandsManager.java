@@ -78,6 +78,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class DisplayCrossSectionCommand extends CommonCommand {
@@ -98,6 +104,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class DisplayMazeCommand extends CommonCommand {
@@ -116,6 +128,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid or maze not found");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class DisplaySolutionCommand extends CommonCommand {
@@ -133,6 +151,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid or solution not found");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class GetClueCommand extends CommonCommand {
@@ -150,6 +174,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid or solution not found");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class ExitCommand extends CommonCommand {
@@ -164,6 +194,12 @@ public class CommandsManager {
             	ex.printStackTrace();
             }
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class Generate3DMazeCommand extends CommonCommand {
@@ -172,15 +208,7 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	try {
-	            String name = args[0];
-	            int cols = Integer.parseInt(args[1]);
-	            int rows = Integer.parseInt(args[2]);
-	            int layers = Integer.parseInt(args[3]);
-	            if (model.getProperties().getGenerateMazeAlgorithm().equals("Growing_Tree"))
-	            	model.generateMazeGrowingTree(name, cols, rows, layers);
-	            else
-	            	model.generateMazeSimple(name, cols, rows, layers);
-	            
+        		
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");
@@ -189,6 +217,26 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+        	try {
+	            String name = (String)args[0];
+	            int cols = (Integer)args[1];
+	            int rows = (Integer)args[2];
+	            int layers = (Integer)args[3];
+	            //if (model.getProperties().getGenerateMazeAlgorithm().equals("Growing_Tree"))
+	            	model.generateMazeGrowingTree(name, cols, rows, layers);
+	            //else
+	            	//model.generateMazeSimple(name, cols, rows, layers);
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
+		}
     }
 
     public class LoadMazeCommand extends CommonCommand {
@@ -206,6 +254,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class SaveMazeCommand extends CommonCommand {
@@ -223,6 +277,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class SolveMazeCommand extends CommonCommand {
@@ -243,6 +303,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class GetMazeCommand extends CommonCommand {
@@ -261,6 +327,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
 //    public class PrintMenuCommand extends CommonCommand {
@@ -284,6 +356,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class LoadMazesSolutionsCommand extends CommonCommand {
@@ -298,6 +376,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class characterMoveCommand extends CommonCommand {
@@ -325,6 +409,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid or maze not found");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class SavePropertiesCommand extends CommonCommand {
@@ -346,6 +436,12 @@ public class CommandsManager {
         		view.displayMessage("Argument(s) invalid or maze not found");
         	}
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     
@@ -363,6 +459,12 @@ public class CommandsManager {
         	view.notifyMazeIsReady(args[0]);
         	//view.displayMessage("Maze " + args[0] + " has been generated successfully!");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class SolutionReadyCommand extends CommonCommand {
@@ -373,6 +475,12 @@ public class CommandsManager {
         	view.displayMessage("Maze " + args[0] + " has been solved!");
         	view.setSolutionAvailable(true);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazeSavedCommand extends CommonCommand {
@@ -382,6 +490,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " has been saved succesfully to file " + args[1]);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazeNotFoundCommand extends CommonCommand {
@@ -391,6 +505,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Save operation failed: Maze " + args[0] + " cannot be found");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazeLoadedCommand extends CommonCommand {
@@ -401,6 +521,12 @@ public class CommandsManager {
         	//view.displayMessage("Maze " + args[0] + " was loaded successfully!");
         	view.notifyMazeIsReady(args[0]);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazeAlreadyExistsCommand extends CommonCommand {
@@ -410,6 +536,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " already exists");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class PropertiesSavedCommand extends CommonCommand {
@@ -419,6 +551,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Properties saved successfully!");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class PropertiesLoadedCommand extends CommonCommand {
@@ -428,6 +566,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Properties loaded successfully!");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazesSolutionsLoadFailedCommand extends CommonCommand {
@@ -437,6 +581,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Mazes solutions failed to load from file " + args[0]);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazesSolutionsLoadedCommand extends CommonCommand {
@@ -446,6 +596,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Mazes solutions loaded successfully!");
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazesSolutionsSavedCommand extends CommonCommand {
@@ -455,6 +611,12 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Mazes solutions saved successfully to " + args[0]);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     public class MazesSolutionsSaveFailedCommand extends CommonCommand {
@@ -464,5 +626,11 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	view.displayMessage("Mazes solutions failed to save to " + args[0]);
         }
+
+		@Override
+		public void doCommand(Object[] args) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }

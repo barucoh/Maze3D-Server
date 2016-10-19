@@ -10,7 +10,7 @@ import java.io.*;
 /**
  * Created by Ohad on 10/09/2016.
  */
-public class Main {
+public class RunServer {
     public static void main(String[] args) throws Exception{
 		System.out.println("Server Side");
 		System.out.println("type \"close the server\" to stop it");

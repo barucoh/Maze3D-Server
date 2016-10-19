@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import model.Model;
+import server.ClientHandler;
 import view.View;
 
 /**
@@ -40,21 +41,34 @@ public class Presenter implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println(arg);
-		
-	    String input = (String)arg;
-	    String cmdStr = input.split(" ")[0];
-        String[] args = null;
+
+		//System.out.println(arg);
 	    Command command = null;
-	    
-		if (!cliMapper.containsKey(cmdStr)) {
+		
+		/*if (!cliMapper.containsKey(cmdStr)) {
 			view.displayMessage("Command doesn't exist");
-			command = cliMapper.get("print_menu");
-		}
-		else if (o == model || cliMapper.get(cmdStr).isVisible()) {
-	        args = input.substring(input.indexOf(" ") + 1).split(" ");
+			//command = cliMapper.get("print_menu");
+		}*/
+		if (o == view || o == model) {
+			//Coming from View
+		    String input = (String)arg;
+		    String cmdStr = input.split(" ")[0];
+	        String[] argsStr = null;
+	        
+	        argsStr = input.substring(input.indexOf(" ") + 1).split(" ");
 			command = cliMapper.get(cmdStr);
+			command.doCommand(argsStr);
 		}
-		command.doCommand(args);
+		else if (o instanceof ClientHandler) { // || cliMapper.get(cmdStr).isVisible()) {
+	        //Coming from Model (Server)
+			Object [] argArr = (Object[])arg;
+			String cmdObj = (String)argArr[0];
+			Object [] argsObj = new Object[argArr.length - 1];
+			
+			for (int i = 1; i < argArr.length; i++)
+				argsObj[i - 1] = argArr[i];
+			command = cliMapper.get((String)cmdObj);
+			command.doCommand(argsObj);
+		}
 	}
 }
