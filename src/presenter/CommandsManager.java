@@ -318,7 +318,7 @@ public class CommandsManager {
         public void doCommand(String[] args) {
         	try {
 	        	Maze3D maze = model.getMaze(args[0]);
-	        	view.setSelectedMaze(maze);
+	        	view.setSelectedMaze(args[0], maze);
         	}
         	catch (ArrayIndexOutOfBoundsException ex) {
         		view.displayMessage("Not enough arguments!");

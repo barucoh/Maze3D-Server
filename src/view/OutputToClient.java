@@ -1,15 +1,10 @@
 package view;
 
-import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import algorithms.mazeGenerators.Maze3D;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import algorithms.search.State;
 import model.Model;
 import server.Maze3DHandler;
 
@@ -26,9 +21,6 @@ public class OutputToClient extends Observable implements View {
     Object [] objToSend;
     
 	private String selectedMazeName;
-	private Maze3D selectedMaze;
-	private Position startPosition;
-	private Position goalPosition;
     
     public OutputToClient(Maze3DHandler clientHandler) {
         this.clientHandler = clientHandler;
@@ -117,10 +109,11 @@ public class OutputToClient extends Observable implements View {
 	 * @param Maze3D Instance of the current maze
 	 */
 	@Override
-	public void setSelectedMaze(Maze3D maze) {
-		objToSend = new Object[2];
+	public void setSelectedMaze(String name, Maze3D maze) {
+		objToSend = new Object[3];
 		objToSend[0] = "get_maze";
-		objToSend[1] = maze;
+		objToSend[1] = name;
+		objToSend[2] = maze;
 		clientHandler.updateClient(objToSend);
 	}
 	
