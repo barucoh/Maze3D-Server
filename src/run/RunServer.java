@@ -1,12 +1,13 @@
 package run;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import model.MyModelServer;
 import presenter.Presenter;
-import server.*;
+import server.Maze3DHandler;
+import server.MyServer;
 import view.OutputToClient;
-import view.ServerWindow;
-
-import java.io.*;
 
 /**
  * Created by Ohad on 10/09/2016.
