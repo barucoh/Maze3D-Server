@@ -1,7 +1,6 @@
 package view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,9 +13,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * This is the main game window.
@@ -105,10 +104,9 @@ public class ServerWindow extends BaseWindow {
             @Override
             public void run() {
                 display.getDefault().asyncExec(new Runnable() {
-                		
                     public void run() {
-	                    	logMessage("User " + num + " just logged in");
-	                    	num++;
+                    	logMessage("User " + num + " just logged in");
+                    	num++;
                     }
                 });
             }
@@ -120,13 +118,11 @@ public class ServerWindow extends BaseWindow {
 		      public void widgetSelected(SelectionEvent event) {
 		    	  	String selectedUser = list.getSelection()[0];
 		        text.setText("Selected User: " + selectedUser);
-		        
 		        btnDisconnectUser.setEnabled(true);
 		        btnDisconnectUser.setText("Disconnect: " + selectedUser);
 		        btnShowDataOnUser.setEnabled(true);
 		        btnShowDataOnUser.setText("Show info on: " + selectedUser);		        
 		      }
-
 		      public void widgetDefaultSelected(SelectionEvent event) {}
 		 });
 		

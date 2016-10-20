@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
 
 public class Maze3DHandler extends Observable implements ClientHandler {
@@ -31,23 +32,24 @@ public class Maze3DHandler extends Observable implements ClientHandler {
                 	setChanged();
                 	notifyObservers(input);
                 } catch (EOFException ex) {
-                	inputStr = "EXIT";
+                	break;
 				} catch (ClassNotFoundException ex) {
                 	ex.printStackTrace();
 				} catch (SocketException ex) {
-                    inputStr = "EXIT";
+                    break;
+                } catch (SocketTimeoutException ex) {
+                    if (Thread.interrupted())
+                    	break;
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
-            }while (!inputStr.toUpperCase().equals("EXIT"));
+            } while (!inputStr.toUpperCase().equals("EXIT"));
             updateClient("EXIT");
 			in.close();
 			out.close();
-		}catch(IOException e){
+		} catch(IOException e) {
 			e.printStackTrace();
-		}catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
