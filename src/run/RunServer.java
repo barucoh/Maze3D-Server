@@ -1,6 +1,6 @@
 package run;
 
-import model.MyModel;
+import model.MyModelServer;
 import presenter.Presenter;
 import server.*;
 import view.OutputToClient;
@@ -17,7 +17,7 @@ public class RunServer {
 		Maze3DHandler clientHandler = new Maze3DHandler();
 
 		OutputToClient view = new OutputToClient(clientHandler);
-		MyModel model = new MyModel();
+		MyModelServer model = new MyModelServer();
 		
 		Presenter presenter = new Presenter(model, view);
 		model.addObserver(presenter);

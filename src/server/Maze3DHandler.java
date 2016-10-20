@@ -1,5 +1,6 @@
 package server;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -28,16 +29,20 @@ public class Maze3DHandler extends Observable implements ClientHandler {
                 	inputStr = (String)obj[0];
                 	setChanged();
                 	notifyObservers(input);
-                }
-                catch (IOException ex) {
-                    ex.printStackTrace();
-                } catch (ClassNotFoundException ex) {
+                } catch (EOFException ex) {
+                	inputStr = "EXIT";
+				} catch (ClassNotFoundException ex) {
                 	ex.printStackTrace();
-				}
+				} catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }while (!inputStr.toUpperCase().equals("EXIT"));
+            //updateClient("EXIT");
 			in.close();
 			out.close();
 		}catch(IOException e){
+			e.printStackTrace();
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}

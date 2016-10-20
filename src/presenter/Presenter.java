@@ -20,14 +20,14 @@ import view.View;
 public class Presenter implements Observer {
 	private Model model;
 	private View view;
-	private CommandsManager commandsManager;
+	private CommandsManagerServer commandsManager;
 	private HashMap<String, Command> cliMapper;
 	
 	public Presenter(Model model, View view) {
 		this.model = model;
 		this.view = view;
 		
-		commandsManager = new CommandsManager(model, view);
+		commandsManager = new CommandsManagerServer(model, view);
 		cliMapper = commandsManager.getCommandsMap();
 	}
 	

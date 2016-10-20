@@ -44,7 +44,7 @@ import view.View;
  * @see View
  * @see Controller
  */
-public class MyModel extends Observable implements Model {
+public class MyModelServer extends Observable implements Model {
     Presenter presenter;
     private Map<String, Maze3DSearchable<Position>> mazes;
     private Map<String, Solution<Position>> solutions;
@@ -54,7 +54,7 @@ public class MyModel extends Observable implements Model {
     
 	private ExecutorService executor;
 
-    public MyModel() {
+    public MyModelServer() {
     	PropertiesSaver.getInstance();
 		properties = PropertiesLoader.getInstance().getProperties();
 		if (properties != null) {
@@ -109,9 +109,9 @@ public class MyModel extends Observable implements Model {
     		if (solutions.get(mazeName) != null) { }
     		else {
     			mazeClues.put(mazeName, 0);
-    			executor.submit(new Callable<Solution<Position>>() {
+    			executor.execute(new Runnable() {
 					@Override
-					public Solution<Position> call() throws Exception {
+					public void run() {
 				        Maze3DSearchable<Position> maze = mazes.get(mazeName);
 				        Searcher<Position> searcher;
 			            MazeSearcherFactory msf = new MazeSearcherFactory();
@@ -121,7 +121,6 @@ public class MyModel extends Observable implements Model {
 			            setChanged();
 			            notifyObservers("solution_ready " + mazeName);
 			            solutions.put(mazeName, sol);
-			            return sol;
 					}
     			});
 			}

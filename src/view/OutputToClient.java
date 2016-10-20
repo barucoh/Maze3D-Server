@@ -54,7 +54,7 @@ public class OutputToClient extends Observable implements View {
 	public void displaySolution(Solution<Position> solution) {
 		objToSend = new Object[2];
 		objToSend[0] = "display_solution";
-		objToSend[1] = solution.getStates();
+		objToSend[1] = solution;
 		clientHandler.updateClient(objToSend);
 	}
 	@Override
@@ -130,9 +130,11 @@ public class OutputToClient extends Observable implements View {
 	}
 	
 	@Override
-	public void setSolutionAvailable(boolean solutionAvailable) {
-		//setChanged();
-		//notifyObservers(solutionAvailable);
+	public void setSolutionAvailable(String mazeName) {
+		objToSend = new Object[2];
+		objToSend[0] = "solution_ready";
+		objToSend[1] = mazeName;
+		clientHandler.updateClient(objToSend);
 	}
 
 	@Override

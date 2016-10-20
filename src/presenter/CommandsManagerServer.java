@@ -20,11 +20,11 @@ import view.View;
  * @see CLI
  * @see Presenter
  */
-public class CommandsManager {
+public class CommandsManagerServer {
 	private Model model;
 	private View view;
 
-    public CommandsManager(Model model, View  view) {
+    public CommandsManagerServer(Model model, View  view) {
         this.model = model;
         this.view = view;
     }
@@ -154,8 +154,15 @@ public class CommandsManager {
 
 		@Override
 		public void doCommand(Object[] args) {
-			// TODO Auto-generated method stub
-			
+        	try{
+        		view.displaySolution(model.getSolution((String)args[0]));
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or solution not found");
+        	}
 		}
     }
 
@@ -306,8 +313,15 @@ public class CommandsManager {
 
 		@Override
 		public void doCommand(Object[] args) {
-			// TODO Auto-generated method stub
-			
+        	try {
+    			model.solveMaze((String)args[0], (String)args[1]);
+        	}
+        	catch (ArrayIndexOutOfBoundsException ex) {
+        		view.displayMessage("Not enough arguments!");
+        	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid");
+        	}
 		}
     }
 
@@ -473,7 +487,7 @@ public class CommandsManager {
         @Override
         public void doCommand(String[] args) {
         	view.displayMessage("Maze " + args[0] + " has been solved!");
-        	view.setSolutionAvailable(true);
+        	view.setSolutionAvailable(args[0]);
         }
 
 		@Override
