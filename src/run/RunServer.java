@@ -4,6 +4,7 @@ import model.MyModelServer;
 import presenter.Presenter;
 import server.*;
 import view.OutputToClient;
+import view.ServerWindow;
 
 import java.io.*;
 
@@ -15,6 +16,8 @@ public class RunServer {
 		System.out.println("Server Side");
 		System.out.println("type \"close the server\" to stop it");
 		Maze3DHandler clientHandler = new Maze3DHandler();
+		
+		ServerWindow window = new ServerWindow();
 
 		OutputToClient view = new OutputToClient(clientHandler);
 		MyModelServer model = new MyModelServer();
@@ -22,11 +25,14 @@ public class RunServer {
 		Presenter presenter = new Presenter(model, view);
 		model.addObserver(presenter);
 		view.addObserver(presenter);
+		window.addObserver(presenter);
+		
 		clientHandler.addObserver(presenter);
 		
 		MyServer server = new MyServer(5400, clientHandler, 10);
 		
 		server.start();
+		window.start();
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
