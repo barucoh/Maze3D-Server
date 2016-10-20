@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Observable;
 
 public class Maze3DHandler extends Observable implements ClientHandler {
@@ -33,11 +34,15 @@ public class Maze3DHandler extends Observable implements ClientHandler {
                 	inputStr = "EXIT";
 				} catch (ClassNotFoundException ex) {
                 	ex.printStackTrace();
-				} catch (IOException ex) {
+				} catch (SocketException ex) {
+                    inputStr = "EXIT";
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }while (!inputStr.toUpperCase().equals("EXIT"));
-            //updateClient("EXIT");
+            updateClient("EXIT");
 			in.close();
 			out.close();
 		}catch(IOException e){
