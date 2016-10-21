@@ -172,7 +172,6 @@ public class CommandsManagerServer {
         @Override
         public void doCommand(String[] args) {
         	try{
-        		view.setNextStep(model.getClue(args[0]));
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");
@@ -184,8 +183,15 @@ public class CommandsManagerServer {
 
 		@Override
 		public void doCommand(Object[] args) {
-			// TODO Auto-generated method stub
-			
+        	try{
+        		view.setNextStep(model.getClue((String)args[0]));
+        	}
+	    	catch (ArrayIndexOutOfBoundsException ex) {
+	    		view.displayMessage("Not enough arguments!");
+	    	}
+        	catch (Exception ex) {
+        		view.displayMessage("Argument(s) invalid or solution not found");
+        	}
 		}
     }
 

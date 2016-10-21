@@ -201,7 +201,7 @@ public class MyModelServer extends Observable implements Model {
     
     @Override
     public Position getClue(String name) {
-    	mazeClues.put(name, mazeClues.get(name).intValue() + 1);
+    	mazeClues.put(name, mazeClues.get(name).intValue() + 1); 
     	return solutions.get(name).getStates().get(mazeClues.get(name)).getValue();
     }
     

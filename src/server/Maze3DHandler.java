@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.StreamCorruptedException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Observable;
@@ -40,7 +41,9 @@ public class Maze3DHandler extends Observable implements ClientHandler {
                 } catch (SocketTimeoutException ex) {
                     if (Thread.interrupted())
                     	break;
-                } catch (IOException ex) {
+                } catch (StreamCorruptedException ex) {
+                	ex.printStackTrace();
+				} catch (IOException ex) {
                     ex.printStackTrace();
                 }
             } while (!inputStr.toUpperCase().equals("EXIT"));

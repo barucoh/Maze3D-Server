@@ -34,12 +34,9 @@ public class OutputToClient extends Observable implements View {
 	 */
 	@Override
 	public void setNextStep(Position nextStep) {
-		objToSend = new Object[5];
-		objToSend[0] = "character_moved";
-		objToSend[1] = selectedMazeName;
-		objToSend[2] = nextStep.x;
-		objToSend[3] = nextStep.y;
-		objToSend[4] = nextStep.z;
+		objToSend = new Object[2];
+		objToSend[0] = "get_clue";
+		objToSend[1] = nextStep;
 		clientHandler.updateClient(objToSend);
 	}
 	/**
