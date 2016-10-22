@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import server.MyServer;
-<<<<<<< HEAD
 import view.OutputToClient;
-=======
->>>>>>> 34b462d626a0e82a8aa25fa205375b2ef394485e
+
 import view.ServerWindow;
 
 /**

@@ -1,11 +1,8 @@
 package view;
 
-<<<<<<< HEAD
-import java.net.Socket;
-=======
 import java.io.IOException;
+import java.net.Socket;
 import java.net.SocketException;
->>>>>>> 34b462d626a0e82a8aa25fa205375b2ef394485e
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
