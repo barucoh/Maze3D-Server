@@ -1,8 +1,12 @@
 package view;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,6 +36,7 @@ import server.MyServer;
  */
 public class ServerWindow extends BaseWindow {
 	
+
 	MyServer server;
 	
 	int num = 1;
@@ -40,7 +45,7 @@ public class ServerWindow extends BaseWindow {
 	Button btnDisconnectUser, btnShowDataOnUser, btnCloseServer;
 	Label lblName, logger;
 	Browser browser;
-	
+	String currentUserSelected;
 	Timer timer;
 	
 	
@@ -49,10 +54,7 @@ public class ServerWindow extends BaseWindow {
 	@Override
 	protected void initWidgets() {
 		
-		users.add("Jeffery");
-		users.add("Steff");
-		users.add("Afik");
-		users.add("Ohad");
+		
 
 		//--------Configuring layouts-------
 		shell.setLayout(new GridLayout(2, true));
@@ -77,8 +79,6 @@ public class ServerWindow extends BaseWindow {
 		
 		List list = new List(shell, SWT.BORDER | SWT.V_SCROLL);
 	    list.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 1, 1));
-	    
-	    for (String user : users) { list.add(user); }
 		
 		Text text = new Text(shell, SWT.BORDER);
 	    text.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 1, 1));
@@ -107,16 +107,31 @@ public class ServerWindow extends BaseWindow {
 
         timer = new Timer();
         	timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
+            @SuppressWarnings("static-access")
+			@Override
             public void run() {
+            	
                 display.getDefault().asyncExec(new Runnable() {
+                	
                     public void run() {
-                    	logMessage("User " + num + " just logged in");
-                    	num++;
+                    		
+                    		Set<String> listUsers = new HashSet<String>(Arrays.asList(list.getItems()));
+	                		
+	                		Set<String> clients = MyServer.clients.keySet();
+	                		
+	                		if(listUsers != clients){
+	                			users.clear();
+		                		for (String client : clients) {
+		                			users.add(client);
+		                		}
+		                		list.removeAll();
+		                		for (String user : users) { list.add(user); }
+	                		}
+
                     }
                 });
             }
-        },1500, 1000);
+        },1000, 5000);
 		
         	
 		list.addSelectionListener(new SelectionListener() {
@@ -127,7 +142,8 @@ public class ServerWindow extends BaseWindow {
 		        btnDisconnectUser.setEnabled(true);
 		        btnDisconnectUser.setText("Disconnect: " + selectedUser);
 		        btnShowDataOnUser.setEnabled(true);
-		        btnShowDataOnUser.setText("Show info on: " + selectedUser);		        
+		        btnShowDataOnUser.setText("Show info on: " + selectedUser);	
+		        currentUserSelected = selectedUser;
 		      }
 		      public void widgetDefaultSelected(SelectionEvent event) {}
 		 });
@@ -136,12 +152,22 @@ public class ServerWindow extends BaseWindow {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String selectedUser = list.getSelection()[0];
-				String ip = "127.0.0.1";
+				if(!currentUserSelected.isEmpty()){
+					Object[] clientDetails = MyServer.clients.get(currentUserSelected);
+					
+					if(clientDetails != null){
+						Socket clientSocket = (Socket)clientDetails[0];
+						Thread clientThread = (Thread)clientDetails[1];
+						
+						String ip = clientSocket.getInetAddress().toString();
+						int port = clientSocket.getPort();
+						String threadName = clientThread.getName();
+						
+						String content = new String("<html><body><table style='width: 70%;font-size: 18px;margin: 0px auto;margin-top: 50px;'><tr><td>User Show name</td><td>" + ip+":"+port+ "</td></tr><tr><td>Ip address</td><td>" + ip + "</td></tr><tr><td>External Port</td><td>" + port + "</td></tr><tr><td>Thread name</td><td>" + threadName + "</td></tr></table></body></html>");
 
-				String content = new String("<html><body><table><tr><td>User Name</td><td>" + selectedUser + "</td></tr><tr><td>Ip address</td><td>" + ip + "</td></tr></table></body></html>");
-
-				browser.setText(content); 
+						browser.setText(content); 
+					}
+				}
 				
 			}
 			
@@ -153,12 +179,20 @@ public class ServerWindow extends BaseWindow {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String selectedUser = list.getSelection()[0];
-				timer.cancel();
-				String message = selectedUser + " has been disconnected";
-				logMessage(message);
-				users.remove(selectedUser);
-				list.remove(selectedUser);
+				if(!currentUserSelected.isEmpty()){
+					Object[] clientDetails = MyServer.clients.get(currentUserSelected);
+					
+					if(clientDetails != null){
+						Socket clientSocket = (Socket)clientDetails[0];
+						Thread clientThread = (Thread)clientDetails[1];
+						String message = currentUserSelected + " has been disconnected";
+						logMessage(message);
+						list.remove(currentUserSelected);
+						clientThread.interrupt();
+						String content = new String("<html><body><h2 style='width: 70%;font-size: 22px;color: red;margin: 0px auto;margin-top: 50px;'>The user \"" + currentUserSelected + "\" has been disconnected successfully!</h2></body></html>");
+					}
+				}
+				
 			}
 			
 			@Override
@@ -169,6 +203,7 @@ public class ServerWindow extends BaseWindow {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+
 				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
