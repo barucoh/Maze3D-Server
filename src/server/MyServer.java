@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +17,7 @@ import view.OutputToClient;
 public class MyServer {
 
 	int port;
-	public static ServerSocket server;
+	public ServerSocket server;
 	
 	int numOfClients;
 	public static HashMap<String, Object[]> clients;
@@ -37,7 +38,7 @@ public class MyServer {
 	
 	public void start() throws Exception{
 		server = new ServerSocket(port);
-		server.setSoTimeout(10*1000);
+		server.setSoTimeout(5*1000);
 		threadpool = Executors.newFixedThreadPool(numOfClients);
 		
 		mainServerThread = new Thread(new Runnable() {			
@@ -47,7 +48,7 @@ public class MyServer {
 					try {
 						final Socket someClient = server.accept();
 						if(someClient!=null){
-							someClient.setSoTimeout(10 * 1000);
+							someClient.setSoTimeout(6 * 1000);
 							threadpool.execute(new Runnable() {									
 								@Override
 								public void run() {
@@ -86,7 +87,10 @@ public class MyServer {
 					}
 					catch (SocketTimeoutException e){
 						System.out.println("no client connected...");
-					} 
+					}
+					catch (SocketException e) {
+						e.printStackTrace();
+					}
 					catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -104,7 +108,7 @@ public class MyServer {
 		threadpool.shutdownNow();
 		// wait 10 seconds over and over again until all running jobs have finished
 		/*boolean allTasksCompleted=false;*/
-		while(!(/*allTasksCompleted=*/threadpool.awaitTermination(10, TimeUnit.SECONDS)));
+		while(!(/*allTasksCompleted=*/threadpool.awaitTermination(5, TimeUnit.SECONDS)));
 		
 		System.out.println("all the tasks have finished");
 

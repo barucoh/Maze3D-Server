@@ -14,19 +14,12 @@ public class RunServer {
 		System.out.println("Server Side");
 		System.out.println("type \"close the server\" to stop it");
 		
-		ServerWindow window = new ServerWindow();
-		
 		MyServer server = new MyServer(5400, 10);
+		ServerWindow window = new ServerWindow();
+		window.setServer(server);
 		
 		server.start();
-		window.start();
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		
-		while(!(in.readLine()).equals("close the server"));
-		
-		server.close();
-		
+		window.start();		
     	
     	/*
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

@@ -1,5 +1,7 @@
 package view;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,6 +19,8 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import server.MyServer;
+
 /**
  * This is the main game window.
  * All the widgets (buttons and display canvas)
@@ -27,6 +31,8 @@ import org.eclipse.swt.widgets.Text;
  * @see View
  */
 public class ServerWindow extends BaseWindow {
+	
+	MyServer server;
 	
 	int num = 1;
 	private static ArrayList<String> users = new ArrayList<String>();
@@ -59,7 +65,7 @@ public class ServerWindow extends BaseWindow {
 		
 	    try {
 	        browser = new Browser(shell, SWT.NONE);
-	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
+	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 6));
 	        browser.setFocus();
 	    	} catch (SWTError e) {
 	         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -158,6 +164,35 @@ public class ServerWindow extends BaseWindow {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
+		
+		btnCloseServer.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						MessageBox msgBox = new MessageBox(shell);
+						try {
+							server.close();
+						}catch (SocketException e) {
+							e.printStackTrace();
+						}catch (IOException e) {
+							e.printStackTrace();
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+						msgBox.setMessage("Server closed successfully!");
+						msgBox.open();
+						timer.cancel();
+						shell.dispose();
+					}
+				});
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});
 
 	}
 	
@@ -165,5 +200,8 @@ public class ServerWindow extends BaseWindow {
 		logger.setText(message);
 	}
 
+	public void setServer(MyServer server){
+		this.server = server;
+	}
 	
 }
