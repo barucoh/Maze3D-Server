@@ -1,8 +1,5 @@
 package run;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 import server.MyServer;
 import view.ServerWindow;
 
