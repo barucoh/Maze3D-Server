@@ -238,10 +238,11 @@ public class CommandsManagerServer {
 	            int cols = (Integer)args[1];
 	            int rows = (Integer)args[2];
 	            int layers = (Integer)args[3];
-	            //if (model.getProperties().getGenerateMazeAlgorithm().equals("Growing_Tree"))
+	            String strategy = (String)args[4];
+	            if (strategy.equals("Growing_Tree"))
 	            	model.generateMazeGrowingTree(name, cols, rows, layers);
-	            //else
-	            	//model.generateMazeSimple(name, cols, rows, layers);
+	            else
+	            	model.generateMazeSimple(name, cols, rows, layers);
         	}
 	    	catch (ArrayIndexOutOfBoundsException ex) {
 	    		view.displayMessage("Not enough arguments!");

@@ -23,30 +23,33 @@ public class Maze3DHandler extends Observable implements ClientHandler {
 			this.out = new ObjectOutputStream(outToClient);
 			Object input;
 			String inputStr = "";
-            do
-            {
-                input = null;
-                try {
-                	input = in.readObject();
-                	Object [] obj = (Object[]) input;
-                	inputStr = (String)obj[0];
-                	setChanged();
-                	notifyObservers(input);
-                } catch (EOFException ex) {
-                	break;
-				} catch (ClassNotFoundException ex) {
-                	ex.printStackTrace();
-				} catch (SocketException ex) {
-                    break;
-                } catch (SocketTimeoutException ex) {
-                    if (Thread.interrupted())
-                    	break;
-                } catch (StreamCorruptedException ex) {
-                	ex.printStackTrace();
-				} catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } while (!inputStr.toUpperCase().equals("EXIT"));
+            //synchronized(this) {
+            	do
+	            {
+	                input = null;
+	                try {
+	                	input = in.readObject();
+	                	Object [] obj = (Object[]) input;
+	                	inputStr = (String)obj[0];
+	                	setChanged();
+	                	notifyObservers(input);
+	                	in.reset();
+	                } catch (EOFException ex) {
+	                	break;
+					} catch (ClassNotFoundException ex) {
+	                	ex.printStackTrace();
+					} catch (SocketException ex) {
+	                    break;
+	                } catch (SocketTimeoutException ex) {
+	                    if (Thread.interrupted())
+	                    	break;
+	                } catch (StreamCorruptedException ex) {
+	                	ex.printStackTrace();
+					} catch (IOException ex) {
+	                    ex.printStackTrace();
+	                }
+	            } while (!inputStr.toUpperCase().equals("EXIT"));
+            //}
             updateClient("EXIT");
 			in.close();
 			out.close();
@@ -60,6 +63,7 @@ public class Maze3DHandler extends Observable implements ClientHandler {
 	public void updateClient(Object objToSend) {
 		try {
 			this.out.writeObject(objToSend);
+			this.out.reset();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
