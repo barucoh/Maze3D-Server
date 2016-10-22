@@ -1,8 +1,6 @@
 package run;
 
 import server.MyServer;
-import view.OutputToClient;
-
 import view.ServerWindow;
 
 /**
