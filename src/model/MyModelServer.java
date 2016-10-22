@@ -50,19 +50,19 @@ public class MyModelServer extends Observable implements Model {
     private Map<String, Solution<Position>> solutions;
     private Map<String, Integer> mazeClues;
     
-    public Properties properties;
+    //public Properties properties;
     
 	private ExecutorService executor;
 
     public MyModelServer() {
-    	PropertiesSaver.getInstance();
-		properties = PropertiesLoader.getInstance().getProperties();
-		if (properties != null) {
-			executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
+    	//PropertiesSaver.getInstance();
+		//properties = PropertiesLoader.getInstance().getProperties();
+		//if (properties != null) {
+			//executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
 			//loadMazesAndSolutions(properties.getMazeSolutionsFileName());
-		}
-		else
-			executor = Executors.newFixedThreadPool(50);
+		//}
+		//else
+		executor = Executors.newFixedThreadPool(50);
 		
         this.mazes = new ConcurrentHashMap<>();
         this.solutions = new HashMap<>();
@@ -70,7 +70,7 @@ public class MyModelServer extends Observable implements Model {
     }
     
     public Properties getProperties() {
-    	return properties;
+    	return null;
     }
     
 	@Override
@@ -137,7 +137,7 @@ public class MyModelServer extends Observable implements Model {
 
     @Override
     public void exit() throws InterruptedException {
-		PropertiesSaver.saveProperties(this.properties);
+		//PropertiesSaver.saveProperties(this.properties);
         //saveMazesAndSolutions(this.properties.getMazeSolutionsFileName());
         
         this.executor.shutdown();
@@ -207,17 +207,17 @@ public class MyModelServer extends Observable implements Model {
     
     @Override
     public void saveProperties(Properties properties) {
-    	this.properties = properties;
-    	PropertiesSaver.saveProperties(properties);
-    	setChanged();
-    	notifyObservers("properties_saved");
+    	//this.properties = properties;
+    	//PropertiesSaver.saveProperties(properties);
+    	//setChanged();
+    	//notifyObservers("properties_saved");
     }
     @Override
     public void loadProperties() {
-		properties = PropertiesLoader.getInstance().getProperties();
-		executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
-    	setChanged();
-    	notifyObservers("properties_loaded");
+		//properties = PropertiesLoader.getInstance().getProperties();
+		//executor = Executors.newFixedThreadPool(properties.getNumOfThreads());
+    	//setChanged();
+    	//notifyObservers("properties_loaded");
     }
     
     class SaveMazeRunnable implements Runnable {

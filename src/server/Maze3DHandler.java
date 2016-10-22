@@ -23,7 +23,7 @@ public class Maze3DHandler extends Observable implements ClientHandler {
 			this.out = new ObjectOutputStream(outToClient);
 			Object input;
 			String inputStr = "";
-            do
+        	do
             {
                 input = null;
                 try {
@@ -60,6 +60,7 @@ public class Maze3DHandler extends Observable implements ClientHandler {
 	public void updateClient(Object objToSend) {
 		try {
 			this.out.writeObject(objToSend);
+			this.out.reset();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

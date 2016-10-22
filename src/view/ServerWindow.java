@@ -1,6 +1,11 @@
 package view;
 
+<<<<<<< HEAD
 import java.net.Socket;
+=======
+import java.io.IOException;
+import java.net.SocketException;
+>>>>>>> 34b462d626a0e82a8aa25fa205375b2ef394485e
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,7 +39,11 @@ import server.MyServer;
  */
 public class ServerWindow extends BaseWindow {
 	
-	public static ArrayList<String> users = new ArrayList<String>();
+
+	MyServer server;
+	
+	int num = 1;
+	private static ArrayList<String> users = new ArrayList<String>();
 	
 	Button btnDisconnectUser, btnShowDataOnUser, btnCloseServer;
 	Label lblName, logger;
@@ -61,7 +70,7 @@ public class ServerWindow extends BaseWindow {
 		
 	    try {
 	        browser = new Browser(shell, SWT.NONE);
-	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
+	        browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 6));
 	        browser.setFocus();
 	    	} catch (SWTError e) {
 	         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -197,13 +206,30 @@ public class ServerWindow extends BaseWindow {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
-//				MyServer.clo
-				
+
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						MessageBox msgBox = new MessageBox(shell);
+						try {
+							server.close();
+						}catch (SocketException e) {
+							e.printStackTrace();
+						}catch (IOException e) {
+							e.printStackTrace();
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+						msgBox.setMessage("Server closed successfully!");
+						msgBox.open();
+						timer.cancel();
+						shell.dispose();
+					}
+				});
 			}
 			
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) { }
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 
 	}
@@ -212,5 +238,8 @@ public class ServerWindow extends BaseWindow {
 		logger.setText(message);
 	}
 
+	public void setServer(MyServer server){
+		this.server = server;
+	}
 	
 }
